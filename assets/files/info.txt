@@ -1,0 +1,15 @@
+El Precio Voluntario para el Pequeño Consumidor (PVPC) es el sistema oficial que sustituye a la anterior Tarifa de Último Recurso (TUR) para la fijación del precio de la energía eléctrica que se aplica en la factura de aquellos consumidores con una potencia contratada no superior a 10 kW y que no se han pasado al mercado libre (más caro).
+
+Esta App ofrece información general y detallada sobre el precio de la electricidad (PVPC) y las horas más baratas y más caras a lo largo de un día para facilitar el ajuste de los hábitos de consumo buscando el ahorro en la factura de la luz.
+
+En definitiva, esta App trata de ayudar a gestionar el consumo eléctrico de forma más eficiente.
+
+Para utilizar esta App solo hay que elegir una de las tres tarifas disponibles en la PVPC y el día que se quiere consultar. Estos tres tipos de tarifas son:
+
+* 2.0 A. Tarifa general (Tarifa por defecto).
+* 2.0 DHA. Tarifa nocturna o de discriminación horaria (Eficiencia 2 periodos).
+* 2.0 DHS. Tarifa supervalle (Vehículo eléctrico).
+
+El término de facturación de energía se presenta en kilovatios hora (€/kWh) e incluye el término de energía de los peajes de acceso, los cargos y el coste de producción pero no incluyen impuestos. Tanto los datos descargados como los índices calculados a partir de ellos se presentan con 5 decimales.
+
+Los precios horarios son los mismos para todo el territorio español independientemente de la zona horaria.

@@ -1,0 +1,21 @@
+Fuente de los datos y permisos
+
+Esta App utiliza información extraída directamente de la web de Red Eléctrica de España (REE) y otros cálculos de elaboración propia a partir de esos datos.
+
+Para la descarga de esos datos se utiliza principalmente la API oficial de REE, organismo que en torno a las 20:15h de cada día publica los precios de la electricidad que se aplicarán al día siguiente. Por tanto, esta aplicación depende de la disponibilidad de ese servidor (mejorable) y requiere conexión a internet para recabar la información.
+
+Esta aplicación no tiene ninguna vinculación oficial con REE.
+
+Garantía, seguridad y privacidad
+
+No puede garantizarse que el contenido ofrecido esté libre de errores, ya sean errores en el servidor de REE o en el proceso de acceso a los datos o en su tratamiento, por lo que la información presentada no cuenta con ninguna garantía, ni explícita ni implícita. El usuario acepta expresamente conocer esta circunstancia. La utilización de la información obtenida por esta App se realizará por parte del usuario bajo su propia cuenta y riesgo, correspondiéndole en exclusiva a él responder frente a terceros por daños que pudieran derivarse de ella.
+
+Aplicación gratuita y sin publicidad. No se utiliza ningún dato del usuario. Software de código abierto (código fuente en Github), libre de spyware, malware, virus o cualquier proceso que atente contra tu dispositivo o viole tu privacidad. Esta aplicación no extrae ni almacena ninguna información ni requiere ningún permiso extraño, y renuncia a la publicidad y a cualquier mecanismo de seguimiento. El acceso, navegación y uso de los servicios en el sitio web de REE puede implicar la aceptación de su Política de Cookies.
+
+Autor y Licencia
+
+Copyleft 2020 - Jesús Cuerda (Webierta) - All Wrongs Reserved. Licencia GPLv3.
+
+Esta app se comparte libremente bajo las condiciones de la GNU General Public License v.3 con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA. Este programa es software libre: usted puede redistribuirlo y / o modificarlo bajo los términos de la Licencia Pública General GNU publicada por la Fundación para el Software Libre, versión 3 (GPLv3). La Licencia Pública General de GNU no permite incorporar este programa en programas propietarios.
+
+Puedes colaborar con el desarrollo de ésta y próximas aplicaciones haciendo una pequeña aportación vía PayPal a través del siguiente enlace:
