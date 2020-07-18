@@ -24,7 +24,7 @@ class About extends StatelessWidget {
                   color: Colors.cyan[700],
                 ),
                 Text(
-                  'Versión 1.1.0',
+                  'Versión 1.1.1',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
