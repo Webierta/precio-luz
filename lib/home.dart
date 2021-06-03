@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'appbar.dart';
-import 'datosConsulta.dart';
+import 'datosJson.dart';
 import 'resultados.dart';
 
 class Home extends StatefulWidget {
@@ -13,10 +13,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Data _data = Data();
-  Data _dataHoy = Data();
+  //Data _data = Data();
+  //Data _dataHoy = Data();
+  Datos _datos = Datos();
+  Datos _datosHoy = Datos();
   DateTime hoy = DateTime.now().toLocal();
-  String _tarifaIn;
+  //String _tarifaIn;
   String _fechaIn;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _dataController;
@@ -27,10 +29,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _tarifaIn = Data.getTarifa()[0];
+    //_tarifaIn = Data.getTarifa()[0];
     _fechaIn = DateFormat('yyyy-MM-dd').format(hoy);
-    _dataController =
-        TextEditingController(text: DateFormat('dd/MM/yyyy').format(hoy));
+    _dataController = TextEditingController(text: DateFormat('dd/MM/yyyy').format(hoy));
   }
 
   @override
@@ -52,7 +53,7 @@ class _HomeState extends State<Home> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'Elige tu tarifa y el día que quieres consultar:',
+                    'Elige el día que quieres consultar:',
                     style: Theme.of(context).textTheme.subtitle1,
                     textAlign: TextAlign.center,
                   ),
@@ -61,7 +62,7 @@ class _HomeState extends State<Home> {
                     key: _formKey,
                     child: Column(
                       children: <Widget>[
-                        DropdownButtonFormField(
+                        /*DropdownButtonFormField(
                           isExpanded: true,
                           decoration: InputDecoration(
                             labelText: 'Tarifa',
@@ -93,7 +94,7 @@ class _HomeState extends State<Home> {
                           onChanged: (value) {
                             setState(() => _tarifaIn = value);
                           },
-                        ),
+                        ),*/
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Fecha',
@@ -106,16 +107,14 @@ class _HomeState extends State<Home> {
                               Icons.calendar_today,
                               color: Colors.black45,
                             ),
-                            contentPadding:
-                                const EdgeInsets.symmetric(vertical: 30.0),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 30.0),
                           ),
                           style: TextStyle(
                             //height: 0.0,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
-                          validator: (value) =>
-                              value.trim().isEmpty ? 'Fecha requerida' : null,
+                          validator: (value) => value.trim().isEmpty ? 'Fecha requerida' : null,
                           controller: _dataController,
                           onTap: () async {
                             FocusScope.of(context).requestFocus(FocusNode());
@@ -123,21 +122,18 @@ class _HomeState extends State<Home> {
                               context: context,
                               locale: const Locale('es', 'ES'),
                               initialDate: DateTime.now(),
-                              firstDate: DateTime(2015),
+                              firstDate: DateTime(2021, 6),
                               lastDate: manana,
                             );
                             if (picked != null) {
                               //if (picked != _fechaIn) { RESET?? //}
-                              _dataController.text =
-                                  DateFormat('dd/MM/yyyy').format(picked);
+                              _dataController.text = DateFormat('dd/MM/yyyy').format(picked);
                               setState(() {
-                                _fechaIn =
-                                    DateFormat('yyyy-MM-dd').format(picked);
-                                _data.fecha = _fechaIn;
+                                _fechaIn = DateFormat('yyyy-MM-dd').format(picked);
+                                //_data.fecha = _fechaIn;
+                                _datos.fecha = _fechaIn;
                               });
-                              noPublicado = picked == manana && hoy.hour < 20
-                                  ? true
-                                  : false;
+                              noPublicado = picked == manana && hoy.hour < 20 ? true : false;
                             }
                           },
                         ),
@@ -148,14 +144,12 @@ class _HomeState extends State<Home> {
                           color: Color(0xff01A0C7),
                           child: MaterialButton(
                             minWidth: MediaQuery.of(context).size.width,
-                            padding:
-                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                             child: Text(
                               "Consultar",
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20.0).copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 20.0)
+                                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                             onPressed: () async {
                               setState(() => _progressActive = true);
@@ -163,8 +157,7 @@ class _HomeState extends State<Home> {
                               if (noPublicado == true) {
                                 await dialogoNoPublicado();
                               }
-                              if (_formKey.currentState.validate() &&
-                                  seguirConsulta == true) {
+                              if (_formKey.currentState.validate() && seguirConsulta == true) {
                                 await consultar();
                               }
                             },
@@ -175,8 +168,7 @@ class _HomeState extends State<Home> {
                           height: 2.0,
                           child: _progressActive == true
                               ? LinearProgressIndicator(
-                                  valueColor:
-                                      AlwaysStoppedAnimation(Colors.blue),
+                                  valueColor: AlwaysStoppedAnimation(Colors.blue),
                                   backgroundColor: Colors.yellow,
                                 )
                               : null,
@@ -200,12 +192,11 @@ class _HomeState extends State<Home> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Aviso'),
-          content: Text(
-              'En torno a las 20:15h de cada día, la REE publica los precios '
+          content: Text('En torno a las 20:15h de cada día, la REE publica los precios '
               'de la electricidad que se aplicarán al día siguiente, por lo que '
               'es posible que los datos todavía no estén publicados.'),
           actions: [
-            FlatButton(
+            TextButton(
               child: Text('Cancelar'),
               onPressed: () {
                 seguirConsulta = false;
@@ -213,7 +204,7 @@ class _HomeState extends State<Home> {
                 Navigator.of(context).pop();
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Consultar'),
               onPressed: () {
                 seguirConsulta = true;
@@ -228,42 +219,52 @@ class _HomeState extends State<Home> {
 
   consultar() async {
     _formKey.currentState.save();
-    _data.tarifa = _tarifaIn;
-    _data.codeTarifa = Data.getCodeTarifa(_tarifaIn);
-    _data.fecha = _fechaIn;
+    //_data.tarifa = _tarifaIn;
+    //_data.codeTarifa = Data.getCodeTarifa(_tarifaIn);
+    /*_data.fecha = _fechaIn;
     _data.preciosHoras.clear();
-    _dataHoy.preciosHoras.clear(); // ????
+    _dataHoy.preciosHoras.clear(); // ????*/
+    _datos.fecha = _fechaIn;
+    _datos.preciosHora.clear();
+    _datosHoy.preciosHora.clear();
 
-    widget.source == 'API'
+    //TODO: cambiar por consulta Json
+    /*widget.source == 'API'
         ? await _data.getPreciosHoras(getUrl(_data.fecha, _data.codeTarifa))
-        : await _data.getPreciosHorasFile(_data.fecha, _data.codeTarifa);
+        : await _data.getPreciosHorasFile(_data.fecha, _data.codeTarifa);*/
+    widget.source == 'API'
+        ? await _datos.getPreciosHoras(
+            'https://api.esios.ree.es/archives/70/download_json?date=${_datos.fecha}')
+        : await _datos.getPreciosHorasFile(_datos.fecha);
 
     var _hoyDate = DateFormat('yyyy-MM-dd').format(hoy);
-    if (noPublicado == true && _data.status == Status.error) {
+    if (noPublicado == true && _datos.status == Status.error) {
       checkStatus(Status.noPublicado);
-    } else if (_data.status != Status.ok) {
-      checkStatus(_data.status);
-    } else if (_data.fecha != _hoyDate) {
-      widget.source == 'API'
+    } else if (_datos.status != Status.ok) {
+      checkStatus(_datos.status);
+    } else if (_datos.fecha != _hoyDate) {
+      /*widget.source == 'API'
           ? await _dataHoy.getPreciosHoras(getUrl(_hoyDate, _data.codeTarifa))
-          : await _dataHoy.getPreciosHorasFile(_hoyDate, _data.codeTarifa);
-    } else if (_data.status == Status.ok) {
+          : await _dataHoy.getPreciosHorasFile(_hoyDate, _data.codeTarifa);*/
+      await _datosHoy.getPreciosHoras(
+          'https://api.esios.ree.es/archives/70/download_json?date=${_datos.fecha}');
+    } else if (_datos.status == Status.ok) {
       //_dataHoy = _data;
-      _dataHoy.preciosHoras = List.from(_data.preciosHoras);
-      _dataHoy.status = _data.status;
+      _datosHoy.preciosHora = List.from(_datos.preciosHora);
+      _datosHoy.status = _datos.status;
     }
 
-    if (_data.status == Status.ok && _dataHoy.status != Status.ok) {
-      checkStatus(_dataHoy.status);
-    } else if (_data.status == Status.ok && _dataHoy.status == Status.ok) {
+    if (_datos.status == Status.ok && _datosHoy.status != Status.ok) {
+      checkStatus(_datosHoy.status);
+    } else if (_datos.status == Status.ok && _datosHoy.status == Status.ok) {
       setState(() => _progressActive = false);
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => Resultado(
-            data: _data,
+            data: _datos,
             fecha: _dataController.text,
-            dataHoy: _dataHoy,
+            dataHoy: _datosHoy,
           ),
         ),
       );
@@ -291,7 +292,7 @@ class _HomeState extends State<Home> {
           title: Text(titulo),
           content: Text(msg),
           actions: [
-            FlatButton(
+            TextButton(
               child: Text('Volver'),
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -324,8 +325,7 @@ class _HomeState extends State<Home> {
       case Status.noPublicado:
         _showError(
           titulo: 'Error',
-          msg:
-              'Es posible que los datos de mañana todavía no estén publicados.\n'
+          msg: 'Es posible que los datos de mañana todavía no estén publicados.\n'
               'Vuelve a intentarlo más tarde.',
         );
         break;

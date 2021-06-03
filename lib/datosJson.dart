@@ -1,38 +1,44 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
+import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:async';
-import 'package:xml/xml.dart';
 
-enum Status {
-  none,
-  ok,
-  error,
-  noPublicado,
-  noAcceso,
-  tiempoExcedido,
-  errorToken
-}
+/*class PVPC {
+  // String dia;
+  // String hora;
+  // String precio;
+  //PVPC({this.dia, this.hora, this.precio});
+  */ /*factory PVPC.fromJson(Map<String, dynamic> parsedJson) {
+    var jsonPVPC = parsedJson['PVPC'];
+    return PVPC(
+      dia: jsonPVPC['Dia'],
+      hora: jsonPVPC['Hora'],
+      precio: jsonPVPC['PCB'],
+    );
+  }*/ /*
+  //PVPC.fromJson(Map<String, dynamic> json) : PCB = json['PVPC']['PCB'];
 
-class Data {
-  String tarifa;
-  String codeTarifa;
+  String jsonPVPC;
+  PVPC({this.jsonPVPC});
+  factory PVPC.fromJson(Map<String, dynamic> json) {
+    return PVPC(jsonPVPC: json['PVPC']);
+  }
+}*/
+
+enum Status { none, ok, error, noPublicado, noAcceso, tiempoExcedido, errorToken }
+
+class Datos {
   String fecha = '';
-  List<double> preciosHoras = List<double>();
+  List<String> horas = <String>[];
+  List<double> preciosHora = <double>[];
   Status status;
 
-  static List<String> getTarifa() =>
-      <String>['General 2.0 A', 'Nocturna 2.0 DHA', 'Supervalle 2.0 DHS'];
-
-  static String getCodeTarifa(tarifaIn) {
-    var listaTarifas = getTarifa();
-    Map<String, String> codeTarifa = {
-      listaTarifas[0]: '1013',
-      listaTarifas[1]: '1014',
-      listaTarifas[2]: '1015'
-    };
-    return codeTarifa[tarifaIn];
+  double roundDouble(double value, int places) {
+    double mod = pow(10.0, places);
+    return ((value * mod).round().toDouble() / mod);
   }
 
   Future getPreciosHoras(String url) async {
@@ -45,19 +51,31 @@ class Data {
       'Cookie': '',
     };
     try {
-      var response = await http
-          .get(url, headers: headers)
-          .timeout(const Duration(seconds: 10));
+      var response =
+          await http.get(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 10));
       if (response.body.contains('Access denied')) {
         status = Status.errorToken;
       } else if (response.statusCode == 200) {
-        var objetoJson = json.decode(response.body);
-        List<double> listaPrecios = List<double>();
-        for (var i = 0; i < 24; i++) {
-          var valor = objetoJson['indicator']['values'][i]['value'];
-          listaPrecios.add(valor / 1000);
+        print('RESPONSE 200');
+        Map<String, dynamic> objJson = jsonDecode(response.body);
+        var jsonPVPC = objJson['PVPC'];
+        List<String> listaDias = <String>[];
+        List<String> listaHoras = <String>[];
+        List<String> listaPrecios = <String>[];
+        for (var obj in jsonPVPC) {
+          var dia = obj['Dia'];
+          var hora = obj['Hora'];
+          var precio = obj['PCB'];
+          listaDias.add(dia);
+          listaHoras.add(hora);
+          listaPrecios.add(precio);
         }
-        preciosHoras = List.from(listaPrecios);
+        fecha = listaDias.first;
+        horas = List.from(listaHoras);
+        for (var precio in listaPrecios) {
+          var precioDouble = roundDouble((double.tryParse(precio.replaceAll(',', '.')) / 1000), 5);
+          preciosHora.add(precioDouble);
+        }
         status = Status.ok;
       } else {
         status = Status.noAcceso;
@@ -69,17 +87,8 @@ class Data {
     }
   }
 
-  Future getPreciosHorasFile(String fecha, String code) async {
+  Future getPreciosHorasFile(String fecha) async {
     var url = 'https://api.esios.ree.es/archives/80/download?date=$fecha}';
-    String codeSerie;
-    if (code == '1013') {
-      codeSerie = 'IST10';
-    } else if (code == '1014') {
-      codeSerie = 'IST11';
-    } else {
-      codeSerie = 'IST12';
-    }
-
     HttpClientRequest request;
     HttpClientResponse response;
     String responseBody;
@@ -90,27 +99,27 @@ class Data {
       request = await http.getUrl(Uri.parse(url));
       response = await request.close();
       responseBody = await response.transform(utf8.decoder).join();
-      objetoXml = parse(responseBody);
+      //objetoXml = parse(responseBody);
+      objetoXml = XmlDocument.parse(responseBody);
       strXml = objetoXml.toString();
 
-      var start = '<IdentificacionSeriesTemporales v="$codeSerie"/>';
+      var start = '<IdentificacionSeriesTemporales v="IST10"/>';
       const end = '</SeriesTemporales>';
       final startIndex = strXml.indexOf(start);
       final endIndex = strXml.indexOf(end, startIndex);
       var subXml = strXml.substring(startIndex, endIndex);
 
-      List<double> listaPrecios = List<double>();
+      List<double> listaPrecios = <double>[];
       for (var i = 1; i < 25; i++) {
         var inicio = '<Pos v="$i"/><Ctd v="';
         const termino = '"/></Intervalo>';
         final indice1 = subXml.indexOf(inicio);
         final indice2 = subXml.indexOf(termino, indice1);
-        var subPrecio =
-            double.parse(subXml.substring(indice1 + inicio.length, indice2));
+        var subPrecio = double.parse(subXml.substring(indice1 + inicio.length, indice2));
         //preciosHoras.clear();
         listaPrecios.add(subPrecio);
       }
-      preciosHoras = List.from(listaPrecios);
+      preciosHora = List.from(listaPrecios);
       status = Status.ok;
     } on Error {
       status = Status.error;

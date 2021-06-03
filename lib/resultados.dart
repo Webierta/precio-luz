@@ -2,16 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
-import 'datosConsulta.dart';
+import 'datosJson.dart';
 import 'leyenda.dart';
 
 class Resultado extends StatefulWidget {
-  final Data data;
+  final Datos data;
   final String fecha;
-  final Data dataHoy;
+  final Datos dataHoy;
 
-  const Resultado({Key key, this.data, this.fecha, this.dataHoy})
-      : super(key: key);
+  const Resultado({Key key, this.data, this.fecha, this.dataHoy}) : super(key: key);
 
   @override
   _ResultadoState createState() => _ResultadoState();
@@ -20,8 +19,8 @@ class Resultado extends StatefulWidget {
 class _ResultadoState extends State<Resultado> {
   var _currentPage = 0;
   ScrollController _controller = ScrollController();
-  Data _data;
-  Data _dataHoy;
+  Datos _data;
+  Datos _dataHoy;
   String _fecha;
 
   @override
@@ -39,37 +38,6 @@ class _ResultadoState extends State<Resultado> {
     //int min = hoy.minute; // int.parse(hora.substring(0, 2));
     //String hora = DateFormat('kk: mm').format(hoy);
     String horaMin = DateFormat('kk:mm').format(hoy);
-
-    Icon icono;
-    switch (_data.codeTarifa) {
-      case '1013':
-        icono = Icon(
-          Icons.offline_bolt,
-          size: 30,
-          color: Colors.blueAccent,
-        );
-        break;
-      case '1014':
-        icono = Icon(
-          Icons.brightness_medium,
-          size: 30,
-          color: Colors.blueAccent,
-        );
-        break;
-      case '1015':
-        icono = Icon(
-          Icons.ev_station,
-          size: 30,
-          color: Colors.blueAccent,
-        );
-        break;
-      default:
-        icono = Icon(
-          Icons.wb_incandescent,
-          size: 40,
-          color: Colors.yellowAccent,
-        );
-    }
 
     Color getColor(double precio) {
       if (precio < 0.10) {
@@ -112,17 +80,15 @@ class _ResultadoState extends State<Resultado> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              icono,
               Text(
-                'Tarifa ${_data.tarifa}',
+                'Tarifa 2.0 TD',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),
           Card(
             color: Colors.blue[100],
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
             child: Container(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -132,19 +98,18 @@ class _ResultadoState extends State<Resultado> {
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                   ListTile(
-                    leading: getBaratos(
-                        _dataHoy.preciosHoras, _dataHoy.preciosHoras[hora]),
+                    leading: getBaratos(_dataHoy.preciosHora, _dataHoy.preciosHora[hora]),
                     title: FittedBox(
                       fit: BoxFit.contain,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        '${_dataHoy.getPrecio(_dataHoy.preciosHoras, hora).toStringAsFixed(5)} €/kWh',
+                        '${_dataHoy.getPrecio(_dataHoy.preciosHora, hora).toStringAsFixed(5)} €/kWh',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     subtitle: Text('Hoy a las $horaMin'),
-                    trailing: _dataHoy.preciosHoras[hora] >=
-                            _dataHoy.calcularPrecioMedio(_dataHoy.preciosHoras)
+                    trailing: _dataHoy.preciosHora[hora] >=
+                            _dataHoy.calcularPrecioMedio(_dataHoy.preciosHora)
                         ? Icon(
                             Icons.arrow_drop_up,
                             size: 45,
@@ -162,8 +127,7 @@ class _ResultadoState extends State<Resultado> {
           ),
           Card(
             color: Colors.blue[100],
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
             child: Container(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -186,10 +150,10 @@ class _ResultadoState extends State<Resultado> {
                       size: 30,
                       color: Colors.yellow,
                     ),
-                    subtitle: Text(
-                        '${(_data.precioMin(_data.preciosHoras)).toStringAsFixed(5)} €/kWh'),
+                    subtitle:
+                        Text('${(_data.precioMin(_data.preciosHora)).toStringAsFixed(5)} €/kWh'),
                     title: Text(
-                      '${_data.getHora(_data.preciosHoras, _data.precioMin(_data.preciosHoras))}',
+                      '${_data.getHora(_data.preciosHora, _data.precioMin(_data.preciosHora))}',
                       style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
@@ -206,15 +170,15 @@ class _ResultadoState extends State<Resultado> {
                       size: 25,
                       color: Colors.deepOrange[700],
                     ),
-                    subtitle: Text(
-                        '${(_data.precioMax(_data.preciosHoras)).toStringAsFixed(5)} €/kWh'),
+                    subtitle:
+                        Text('${(_data.precioMax(_data.preciosHora)).toStringAsFixed(5)} €/kWh'),
                     title: Text(
-                      '${_data.getHora(_data.preciosHoras, _data.precioMax(_data.preciosHoras))}',
+                      '${_data.getHora(_data.preciosHora, _data.precioMax(_data.preciosHora))}',
                       style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
                   Text(
-                      'Precio Medio: ${(_data.calcularPrecioMedio(_data.preciosHoras)).toStringAsFixed(5)} €/kWh'),
+                      'Precio Medio: ${(_data.calcularPrecioMedio(_data.preciosHora)).toStringAsFixed(5)} €/kWh'),
                 ],
               ),
             ),
@@ -230,9 +194,8 @@ class _ResultadoState extends State<Resultado> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              icono,
               Text(
-                'Tarifa ${_data.tarifa}',
+                'Tarifa 2.0 TD',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ],
@@ -248,9 +211,9 @@ class _ResultadoState extends State<Resultado> {
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: _data.preciosHoras.length,
+            itemCount: _data.preciosHora.length,
             itemBuilder: (context, index) {
-              Color _color = getColor(_data.preciosHoras[index]);
+              Color _color = getColor(_data.preciosHora[index]);
               return Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -260,8 +223,7 @@ class _ResultadoState extends State<Resultado> {
                 ),
                 //height: 55.0,
                 child: ListTile(
-                  trailing: _data.preciosHoras[index] >=
-                          _data.calcularPrecioMedio(_data.preciosHoras)
+                  trailing: _data.preciosHora[index] >= _data.calcularPrecioMedio(_data.preciosHora)
                       ? Icon(
                           Icons.arrow_drop_up,
                           size: 45,
@@ -272,11 +234,9 @@ class _ResultadoState extends State<Resultado> {
                           size: 45,
                           color: Colors.green,
                         ),
-                  title: Text(
-                      '${(_data.preciosHoras[index]).toStringAsFixed(5)} €/kWh'),
+                  title: Text('${(_data.preciosHora[index]).toStringAsFixed(5)} €/kWh'),
                   subtitle: Text('${index}h - ${index + 1}h'),
-                  leading:
-                      getBaratos(_data.preciosHoras, _data.preciosHoras[index]),
+                  leading: getBaratos(_data.preciosHora, _data.preciosHora[index]),
                 ),
               );
             },
@@ -289,9 +249,8 @@ class _ResultadoState extends State<Resultado> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              icono,
               Text(
-                'Tarifa ${_data.tarifa}',
+                'Tarifa 2.0 TD',
                 style: Theme.of(context).textTheme.headline6,
               ),
             ],
@@ -307,9 +266,9 @@ class _ResultadoState extends State<Resultado> {
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: _data.preciosHoras.length,
+            itemCount: _data.preciosHora.length,
             itemBuilder: (context, index) {
-              List<double> preciosAs = List.from(_data.preciosHoras);
+              List<double> preciosAs = List.from(_data.preciosHora);
               preciosAs.sort();
               var _color = getColor(preciosAs[index]);
               return Container(
@@ -320,8 +279,7 @@ class _ResultadoState extends State<Resultado> {
                   color: _color,
                 ),
                 child: ListTile(
-                  trailing: preciosAs[index] >=
-                          _data.calcularPrecioMedio(_data.preciosHoras)
+                  trailing: preciosAs[index] >= _data.calcularPrecioMedio(_data.preciosHora)
                       ? Icon(
                           Icons.arrow_drop_up,
                           size: 45,
@@ -333,11 +291,10 @@ class _ResultadoState extends State<Resultado> {
                           color: Colors.green,
                         ),
                   title: Text(
-                    '${_data.getHora(_data.preciosHoras, preciosAs[index])}',
+                    '${_data.getHora(_data.preciosHora, preciosAs[index])}',
                     style: Theme.of(context).textTheme.headline6,
                   ),
-                  subtitle:
-                      Text('${preciosAs[index].toStringAsFixed(5)} €/kWh'),
+                  subtitle: Text('${preciosAs[index].toStringAsFixed(5)} €/kWh'),
                   leading: Text('${index + 1}'),
                 ),
               );
@@ -381,15 +338,15 @@ class _ResultadoState extends State<Resultado> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.lightbulb_outline),
-            title: Text("PVPC"),
+            label: 'PVPC',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.euro_symbol),
-            title: Text("PRECIO"),
+            label: 'PRECIO',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
-            title: Text("HORAS"),
+            label: 'HORAS',
           ),
         ],
         currentIndex: _currentPage,

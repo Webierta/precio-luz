@@ -45,9 +45,14 @@ class _InicioState extends State<Inicio> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
+              Text(
+                'Selecciona el método de descarga de datos',
+                style: Theme.of(context).textTheme.subtitle1,
+                textAlign: TextAlign.center,
+              ),
               Stack(
                 children: <Widget>[
                   Icon(
@@ -78,20 +83,16 @@ class _InicioState extends State<Inicio> {
                 obscureText: !tokenVisible,
                 onChanged: (_) {
                   setState(() {
-                    _controller.text.trim().isEmpty
-                        ? _validate = true
-                        : _validate = false;
+                    _controller.text.trim().isEmpty ? _validate = true : _validate = false;
                   });
                 },
                 autofocus: false,
                 style: TextStyle(fontSize: 16.0),
                 decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  contentPadding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                   labelText: 'Token',
                   errorText: _validate ? 'Introduce tu token personal' : null,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(32.0)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                   suffixIcon: IconButton(
                     icon: Icon(
                       tokenVisible ? Icons.visibility_off : Icons.visibility,
@@ -130,8 +131,8 @@ class _InicioState extends State<Inicio> {
                   child: Text(
                     "API",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16.0).copyWith(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16.0)
+                        .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -154,15 +155,10 @@ class _InicioState extends State<Inicio> {
                   child: Text(
                     "Archivo",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16.0).copyWith(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16.0)
+                        .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'Selecciona el método de descarga de datos',
-                style: Theme.of(context).textTheme.bodyText1,
               ),
             ],
           ),
@@ -197,16 +193,14 @@ class Fab extends StatelessWidget {
                         ),
                         Divider(),
                         SizedBox(height: 10.0),
-                        Text(
-                            'La aplicación admite dos métodos para la obtención de los datos: '
+                        Text('La aplicación admite dos métodos para la obtención de los datos: '
                             'con la API oficial (recomendado) y desde un archivo.'),
                         SizedBox(height: 10.0),
                         Text(
                             'Para utilizar la API se necesita autentificarse con un código de acceso personal '
                             '(token) que se obtiene gratuitamente solicitándolo por email a consultasios@ree.es'),
                         SizedBox(height: 10.0),
-                        Text(
-                            'Solo es necesario introducir el token personal la primera vez '
+                        Text('Solo es necesario introducir el token personal la primera vez '
                             'puesto que queda almacenado en los ajustes de la aplicación.'),
                         SizedBox(height: 10.0),
                         Text(

@@ -19,50 +19,6 @@ class Leyenda extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Tarifas PVPC:',
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                    Card(
-                      elevation: 4.0,
-                      color: Colors.blue[50],
-                      child: Container(
-                        child: Column(
-                          children: <Widget>[
-                            ListTile(
-                              leading: Icon(
-                                Icons.offline_bolt,
-                                size: 30,
-                                color: Colors.blueAccent,
-                              ),
-                              title: Text('2.0 A. Tarifa general'),
-                              subtitle: Text('Tarifa por defecto'),
-                            ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.brightness_medium,
-                                size: 30,
-                                color: Colors.blueAccent,
-                              ),
-                              isThreeLine: true,
-                              title: Text(
-                                  '2.0 DHA. Tarifa nocturna o de discriminación horaria'),
-                              subtitle: Text('Eficiencia 2 periodos'),
-                            ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.ev_station,
-                                size: 30,
-                                color: Colors.blueAccent,
-                              ),
-                              title: Text('2.0 DHS. Tarifa supervalle'),
-                              subtitle: Text('Vehículo eléctrico'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20.0),
-                    Text(
                       'Respecto al precio medio del día:',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
@@ -146,29 +102,23 @@ class Leyenda extends StatelessWidget {
                           children: <Widget>[
                             Expanded(
                               child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 20.0),
+                                padding: const EdgeInsets.symmetric(vertical: 20.0),
                                 color: Colors.lightGreen[50],
-                                child:
-                                    Text('< 0,10', textAlign: TextAlign.center),
+                                child: Text('< 0,10', textAlign: TextAlign.center),
                               ),
                             ),
                             Expanded(
                               child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 20.0),
+                                padding: const EdgeInsets.symmetric(vertical: 20.0),
                                 color: Colors.yellow[50],
-                                child: Text('Intermedio',
-                                    textAlign: TextAlign.center),
+                                child: Text('Intermedio', textAlign: TextAlign.center),
                               ),
                             ),
                             Expanded(
                               child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 20.0),
+                                padding: const EdgeInsets.symmetric(vertical: 20.0),
                                 color: Colors.red[50],
-                                child:
-                                    Text('> 0,15', textAlign: TextAlign.center),
+                                child: Text('> 0,15', textAlign: TextAlign.center),
                               ),
                             ),
                           ],

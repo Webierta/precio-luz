@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'head.dart';
 
 class Info extends StatelessWidget {
-  static const String id = 'info';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,8 +33,7 @@ class Info extends StatelessWidget {
 
   FutureBuilder<String> _textoABout(BuildContext context) {
     return FutureBuilder(
-      future:
-          DefaultAssetBundle.of(context).loadString('assets/files/info.txt'),
+      future: DefaultAssetBundle.of(context).loadString('assets/files/info.txt'),
       builder: (context, snapshot) {
         return Text(
           snapshot.data ?? 'Error: archivo no encontrado',

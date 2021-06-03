@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'about.dart';
+import 'donate.dart';
 import 'info.dart';
 
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -44,6 +45,22 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text('About'),
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: DonationPage(), //About.id,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Icon(
+                      Icons.local_cafe,
+                      color: const Color(0xff01A0C7),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text('Colaborar'),
                     ),
                   ],
                 ),
