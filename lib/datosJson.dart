@@ -6,27 +6,31 @@ import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-/*class PVPC {
-  // String dia;
-  // String hora;
-  // String precio;
-  //PVPC({this.dia, this.hora, this.precio});
-  */ /*factory PVPC.fromJson(Map<String, dynamic> parsedJson) {
-    var jsonPVPC = parsedJson['PVPC'];
-    return PVPC(
-      dia: jsonPVPC['Dia'],
-      hora: jsonPVPC['Hora'],
-      precio: jsonPVPC['PCB'],
-    );
-  }*/ /*
-  //PVPC.fromJson(Map<String, dynamic> json) : PCB = json['PVPC']['PCB'];
+class DatosPVPC {
+  String dia;
+  String hora;
+  String precio;
+  DatosPVPC({this.dia, this.hora, this.precio});
 
-  String jsonPVPC;
-  PVPC({this.jsonPVPC});
-  factory PVPC.fromJson(Map<String, dynamic> json) {
-    return PVPC(jsonPVPC: json['PVPC']);
+  factory DatosPVPC.fromJson(Map<String, dynamic> json) {
+    return DatosPVPC(
+      dia: json['Dia'],
+      hora: json['Hora'],
+      precio: json['PCB'],
+    );
   }
-}*/
+}
+
+class DatosJson {
+  final List<DatosPVPC> datosPVPC;
+  DatosJson({this.datosPVPC});
+
+  factory DatosJson.fromJson(Map<String, dynamic> json) {
+    List<dynamic> listaObj = json['PVPC'];
+    List<DatosPVPC> listaPVPC = listaObj.map((obj) => DatosPVPC.fromJson(obj)).toList();
+    return DatosJson(datosPVPC: listaPVPC);
+  }
+}
 
 enum Status { none, ok, error, noPublicado, noAcceso, tiempoExcedido, errorToken }
 
@@ -56,9 +60,8 @@ class Datos {
       if (response.body.contains('Access denied')) {
         status = Status.errorToken;
       } else if (response.statusCode == 200) {
-        print('RESPONSE 200');
         Map<String, dynamic> objJson = jsonDecode(response.body);
-        var jsonPVPC = objJson['PVPC'];
+        /*var jsonPVPC = objJson['PVPC'];
         List<String> listaDias = <String>[];
         List<String> listaHoras = <String>[];
         List<String> listaPrecios = <String>[];
@@ -69,6 +72,21 @@ class Datos {
           listaDias.add(dia);
           listaHoras.add(hora);
           listaPrecios.add(precio);
+        }
+        fecha = listaDias.first;
+        horas = List.from(listaHoras);
+        for (var precio in listaPrecios) {
+          var precioDouble = roundDouble((double.tryParse(precio.replaceAll(',', '.')) / 1000), 5);
+          preciosHora.add(precioDouble);
+        }*/
+        var datosJson = DatosJson.fromJson(objJson);
+        List<String> listaDias = <String>[];
+        List<String> listaHoras = <String>[];
+        List<String> listaPrecios = <String>[];
+        for (var obj in datosJson.datosPVPC) {
+          listaDias.add(obj.dia);
+          listaHoras.add(obj.hora);
+          listaPrecios.add(obj.precio);
         }
         fecha = listaDias.first;
         horas = List.from(listaHoras);

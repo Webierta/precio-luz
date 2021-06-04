@@ -62,39 +62,6 @@ class _HomeState extends State<Home> {
                     key: _formKey,
                     child: Column(
                       children: <Widget>[
-                        /*DropdownButtonFormField(
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            labelText: 'Tarifa',
-                            labelStyle: TextStyle(
-                              color: Colors.black45,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w400,
-                              //height: 2.0,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.euro_symbol,
-                              color: Colors.black45,
-                            ),
-                          ),
-                          value: _tarifaIn,
-                          items: Data.getTarifa().map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: TextStyle(
-                                  height: 0.0,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() => _tarifaIn = value);
-                          },
-                        ),*/
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Fecha',
@@ -228,7 +195,6 @@ class _HomeState extends State<Home> {
     _datos.preciosHora.clear();
     _datosHoy.preciosHora.clear();
 
-    //TODO: cambiar por consulta Json
     /*widget.source == 'API'
         ? await _data.getPreciosHoras(getUrl(_data.fecha, _data.codeTarifa))
         : await _data.getPreciosHorasFile(_data.fecha, _data.codeTarifa);*/
@@ -246,8 +212,11 @@ class _HomeState extends State<Home> {
       /*widget.source == 'API'
           ? await _dataHoy.getPreciosHoras(getUrl(_hoyDate, _data.codeTarifa))
           : await _dataHoy.getPreciosHorasFile(_hoyDate, _data.codeTarifa);*/
-      await _datosHoy.getPreciosHoras(
-          'https://api.esios.ree.es/archives/70/download_json?date=${_datos.fecha}');
+
+      widget.source == 'API'
+          ? await _datosHoy.getPreciosHoras(
+              'https://api.esios.ree.es/archives/70/download_json?date=${_hoyDate}')
+          : await _datosHoy.getPreciosHorasFile(_hoyDate);
     } else if (_datos.status == Status.ok) {
       //_dataHoy = _data;
       _datosHoy.preciosHora = List.from(_datos.preciosHora);
