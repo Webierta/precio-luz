@@ -329,22 +329,22 @@ class ColumnaPage extends StatelessWidget {
             itemCount: data.preciosHora.length,
             itemBuilder: (context, index) {
               List<double> precios;
-              //int _index;
+              int _index;
               if (page == 2) {
                 precios = data.preciosHora;
                 //_colorPeriodo = getColorPeriodo(index);
-                //_index = index;
+                _index = index;
                 //print('INDEX 1: $_index');
                 //_colorPeriodo = Tarifa.getColorPeriodo(periodo);
               } else {
                 precios = List.from(data.preciosHora);
                 precios.sort();
                 //_colorPeriodo = getColorPeriodo(data.getHour(data.preciosHora, precios[index]));
-                //_index = data.getHour(data.preciosHora, precios[index]);
+                _index = data.getHour(data.preciosHora, precios[index]);
                 //print('INDEX 2: $_index');
               }
               Color _color = Tarifa.getColorFondo(precios[index]);
-              var periodo = Tarifa.getPeriodo(data.getDataTime(data.fecha, index));
+              var periodo = Tarifa.getPeriodo(data.getDataTime(data.fecha, _index));
               var _colorPeriodo = Tarifa.getColorPeriodo(periodo);
               var precioMedio = data.calcularPrecioMedio(data.preciosHora);
               double desviacion = precios[index] - precioMedio;

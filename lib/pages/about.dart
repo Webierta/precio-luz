@@ -22,7 +22,7 @@ class About extends StatelessWidget {
                   color: Colors.cyan[700],
                 ),
                 Text(
-                  'Versión 2.0.2',
+                  'Versión 2.0.3',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
