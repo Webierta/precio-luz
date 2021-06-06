@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'about.dart';
-import 'donate.dart';
-import 'info.dart';
+import '../pages/about.dart';
+import '../pages/donate.dart';
+import '../pages/info.dart';
 
 class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Text title;

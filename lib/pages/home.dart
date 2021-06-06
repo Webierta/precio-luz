@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'appbar.dart';
-import 'datosJson.dart';
+import '../utils/estados.dart';
+import '../widgets/appbar.dart';
+import '../services/datos.dart';
 import 'resultados.dart';
 
 class Home extends StatefulWidget {
-  final String source;
+  final Source source;
   Home({Key key, this.source}) : super(key: key);
-
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  //Data _data = Data();
-  //Data _dataHoy = Data();
   Datos _datos = Datos();
   Datos _datosHoy = Datos();
   DateTime hoy = DateTime.now().toLocal();
-  //String _tarifaIn;
   String _fechaIn;
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _dataController;
@@ -29,7 +26,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    //_tarifaIn = Data.getTarifa()[0];
     _fechaIn = DateFormat('yyyy-MM-dd').format(hoy);
     _dataController = TextEditingController(text: DateFormat('dd/MM/yyyy').format(hoy));
   }
@@ -52,10 +48,12 @@ class _HomeState extends State<Home> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: <Widget>[
-                  Text(
-                    'Elige el día que quieres consultar:',
-                    style: Theme.of(context).textTheme.subtitle1,
-                    textAlign: TextAlign.center,
+                  FittedBox(
+                    child: Text(
+                      'Selecciona el día que quieres consultar:',
+                      style: Theme.of(context).textTheme.subtitle1,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   SizedBox(height: 20.0),
                   Form(
@@ -97,7 +95,6 @@ class _HomeState extends State<Home> {
                               _dataController.text = DateFormat('dd/MM/yyyy').format(picked);
                               setState(() {
                                 _fechaIn = DateFormat('yyyy-MM-dd').format(picked);
-                                //_data.fecha = _fechaIn;
                                 _datos.fecha = _fechaIn;
                               });
                               noPublicado = picked == manana && hoy.hour < 20 ? true : false;
@@ -115,7 +112,7 @@ class _HomeState extends State<Home> {
                             child: Text(
                               "Consultar",
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 20.0)
+                              style: TextStyle(fontSize: 16.0)
                                   .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                             onPressed: () async {
@@ -186,22 +183,17 @@ class _HomeState extends State<Home> {
 
   consultar() async {
     _formKey.currentState.save();
-    //_data.tarifa = _tarifaIn;
-    //_data.codeTarifa = Data.getCodeTarifa(_tarifaIn);
-    /*_data.fecha = _fechaIn;
-    _data.preciosHoras.clear();
-    _dataHoy.preciosHoras.clear(); // ????*/
     _datos.fecha = _fechaIn;
     _datos.preciosHora.clear();
-    _datosHoy.preciosHora.clear();
+    _datosHoy.preciosHora.clear(); // ????
 
     /*widget.source == 'API'
-        ? await _data.getPreciosHoras(getUrl(_data.fecha, _data.codeTarifa))
-        : await _data.getPreciosHorasFile(_data.fecha, _data.codeTarifa);*/
-    widget.source == 'API'
-        ? await _datos.getPreciosHoras(
-            'https://api.esios.ree.es/archives/70/download_json?date=${_datos.fecha}')
-        : await _datos.getPreciosHorasFile(_datos.fecha);
+        ? await _datos.getPreciosHoras(_datos.fecha)
+        : await _datos.getPreciosHorasFile(_datos.fecha);*/
+    await _datos.getPreciosHoras(_datos.fecha, widget.source);
+    if (_datos.status == Status.accessDenied) {
+      await _datos.getPreciosHorasFile(_datos.fecha);
+    }
 
     var _hoyDate = DateFormat('yyyy-MM-dd').format(hoy);
     if (noPublicado == true && _datos.status == Status.error) {
@@ -210,13 +202,12 @@ class _HomeState extends State<Home> {
       checkStatus(_datos.status);
     } else if (_datos.fecha != _hoyDate) {
       /*widget.source == 'API'
-          ? await _dataHoy.getPreciosHoras(getUrl(_hoyDate, _data.codeTarifa))
-          : await _dataHoy.getPreciosHorasFile(_hoyDate, _data.codeTarifa);*/
-
-      widget.source == 'API'
-          ? await _datosHoy.getPreciosHoras(
-              'https://api.esios.ree.es/archives/70/download_json?date=${_hoyDate}')
-          : await _datosHoy.getPreciosHorasFile(_hoyDate);
+          ? await _datosHoy.getPreciosHoras(_hoyDate)
+          : await _datosHoy.getPreciosHorasFile(_hoyDate);*/
+      await _datosHoy.getPreciosHoras(_hoyDate, widget.source);
+      if (_datosHoy.status == Status.accessDenied) {
+        await _datosHoy.getPreciosHorasFile(_hoyDate);
+      }
     } else if (_datos.status == Status.ok) {
       //_dataHoy = _data;
       _datosHoy.preciosHora = List.from(_datos.preciosHora);
@@ -240,12 +231,12 @@ class _HomeState extends State<Home> {
     }
   }
 
-  String getUrl(String date, String code) {
+  /*String getUrl(String date, String code) {
     return 'https://api.esios.ree.es/indicators/'
         '$code?'
         'start_date=${date}T00:00:00'
         '&end_date=${date}T23:50:00';
-  }
+  }*/
 
   /* String getUrlFile(String date) {  // NECESARIO ??
     return 'https://api.esios.ree.es/archives/80/download?date=$date}';

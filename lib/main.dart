@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:precio_luz/inicio.dart';
-import 'inicio.dart';
+import 'pages/inicio.dart';
 
 void main() => runApp(PrecioLuz());
 

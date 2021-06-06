@@ -2,37 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import '../utils/estados.dart';
 import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
-class DatosPVPC {
-  String dia;
-  String hora;
-  String precio;
-  DatosPVPC({this.dia, this.hora, this.precio});
-
-  factory DatosPVPC.fromJson(Map<String, dynamic> json) {
-    return DatosPVPC(
-      dia: json['Dia'],
-      hora: json['Hora'],
-      precio: json['PCB'],
-    );
-  }
-}
-
-class DatosJson {
-  final List<DatosPVPC> datosPVPC;
-  DatosJson({this.datosPVPC});
-
-  factory DatosJson.fromJson(Map<String, dynamic> json) {
-    List<dynamic> listaObj = json['PVPC'];
-    List<DatosPVPC> listaPVPC = listaObj.map((obj) => DatosPVPC.fromJson(obj)).toList();
-    return DatosJson(datosPVPC: listaPVPC);
-  }
-}
-
-enum Status { none, ok, error, noPublicado, noAcceso, tiempoExcedido, errorToken }
+import 'datos_json.dart';
 
 class Datos {
   String fecha = '';
@@ -45,7 +21,9 @@ class Datos {
     return ((value * mod).round().toDouble() / mod);
   }
 
-  Future getPreciosHoras(String url) async {
+  Future getPreciosHoras(String fecha, Source source) async {
+    //print('API');
+    var url = 'https://api.esios.ree.es/archives/70/download_json?date=$fecha';
     var prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
     Map<String, String> headers = {
@@ -58,27 +36,13 @@ class Datos {
       var response =
           await http.get(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 10));
       if (response.body.contains('Access denied')) {
-        status = Status.errorToken;
+        if (source == Source.api) {
+          status = Status.errorToken;
+        } else {
+          status = Status.accessDenied;
+        }
       } else if (response.statusCode == 200) {
         Map<String, dynamic> objJson = jsonDecode(response.body);
-        /*var jsonPVPC = objJson['PVPC'];
-        List<String> listaDias = <String>[];
-        List<String> listaHoras = <String>[];
-        List<String> listaPrecios = <String>[];
-        for (var obj in jsonPVPC) {
-          var dia = obj['Dia'];
-          var hora = obj['Hora'];
-          var precio = obj['PCB'];
-          listaDias.add(dia);
-          listaHoras.add(hora);
-          listaPrecios.add(precio);
-        }
-        fecha = listaDias.first;
-        horas = List.from(listaHoras);
-        for (var precio in listaPrecios) {
-          var precioDouble = roundDouble((double.tryParse(precio.replaceAll(',', '.')) / 1000), 5);
-          preciosHora.add(precioDouble);
-        }*/
         var datosJson = DatosJson.fromJson(objJson);
         List<String> listaDias = <String>[];
         List<String> listaHoras = <String>[];
@@ -106,7 +70,8 @@ class Datos {
   }
 
   Future getPreciosHorasFile(String fecha) async {
-    var url = 'https://api.esios.ree.es/archives/80/download?date=$fecha}';
+    //print('FILE');
+    var url = 'https://api.esios.ree.es/archives/80/download?date=$fecha';
     HttpClientRequest request;
     HttpClientResponse response;
     String responseBody;
@@ -163,8 +128,20 @@ class Datos {
   }
 
   String getHora(List<double> precios, double precio) {
-    var pos = precios.indexOf(precio);
+    int pos = precios.indexOf(precio);
     return '${pos}h - ${pos + 1}h';
+  }
+
+  int getHour(List<double> precios, double precio) {
+    return precios.indexOf(precio);
+  }
+
+  DateTime getDataTime(String fecha, int hora) {
+    //var hora = getHour(precios, precio);
+    var fechaString = '$fecha $hora';
+    DateTime date = DateFormat('yyyy-MM-dd H').parse(fechaString);
+    // print(date); //TODO : limpiar
+    return date;
   }
 
   double getPrecio(List<double> precios, int hora) {

@@ -19,7 +19,41 @@ class Leyenda extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Respecto al precio medio del día:',
+                      'Periodos horarios:',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                    Card(
+                      elevation: 4.0,
+                      color: Colors.blue[50],
+                      child: Container(
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: const [
+                            ContainerPeriodo(
+                              texto: 'Periodo Punta',
+                              color: Color(0xFFe57373),
+                              icono: Icons.trending_up,
+                              colorIcono: Colors.red,
+                            ),
+                            ContainerPeriodo(
+                              texto: 'Periodo Llano',
+                              color: Colors.amberAccent,
+                              icono: Icons.trending_neutral,
+                              colorIcono: Colors.amber,
+                            ),
+                            ContainerPeriodo(
+                              texto: 'Periodo Valle',
+                              color: Color(0xFF81C784),
+                              icono: Icons.trending_down,
+                              colorIcono: Colors.green,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
+                    Text(
+                      'Diferencia respecto al precio medio del día:',
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                     Card(
@@ -34,7 +68,7 @@ class Leyenda extends StatelessWidget {
                                 size: 50,
                                 color: Colors.green,
                               ),
-                              title: Text('Inferior al precio medio'),
+                              title: Text('Inferior'),
                             ),
                             ListTile(
                               leading: Icon(
@@ -42,7 +76,7 @@ class Leyenda extends StatelessWidget {
                                 size: 50,
                                 color: Colors.red,
                               ),
-                              title: Text('Superior al precio medio'),
+                              title: Text('Superior'),
                             ),
                           ],
                         ),
@@ -65,7 +99,7 @@ class Leyenda extends StatelessWidget {
                                 size: 30,
                                 color: Colors.green[700],
                               ),
-                              title: Text('Las 8 horas más baratas'),
+                              title: Text('8 horas más baratas'),
                             ),
                             ListTile(
                               leading: Icon(
@@ -73,7 +107,7 @@ class Leyenda extends StatelessWidget {
                                 size: 30,
                                 color: Colors.amber[700],
                               ),
-                              title: Text('Las 8 horas intermedias'),
+                              title: Text('8 horas intermedias'),
                             ),
                             ListTile(
                               leading: Icon(
@@ -81,7 +115,7 @@ class Leyenda extends StatelessWidget {
                                 size: 30,
                                 color: Colors.deepOrange[700],
                               ),
-                              title: Text('Las 8 horas más caras'),
+                              title: Text('8 horas más caras'),
                             ),
                           ],
                         ),
@@ -103,7 +137,7 @@ class Leyenda extends StatelessWidget {
                             Expanded(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                color: Colors.lightGreen[50],
+                                color: Colors.lightGreen[100],
                                 child: Text('< 0,10', textAlign: TextAlign.center),
                               ),
                             ),
@@ -117,7 +151,7 @@ class Leyenda extends StatelessWidget {
                             Expanded(
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 20.0),
-                                color: Colors.red[50],
+                                color: Colors.red[100],
                                 child: Text('> 0,15', textAlign: TextAlign.center),
                               ),
                             ),
@@ -130,6 +164,38 @@ class Leyenda extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ContainerPeriodo extends StatelessWidget {
+  final String texto;
+  final Color color;
+  final IconData icono;
+  final Color colorIcono;
+  const ContainerPeriodo({Key key, this.texto, this.color, this.icono, this.colorIcono})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 45,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 0.8, color: Colors.grey),
+          left: BorderSide(width: 10.0, color: color),
+        ),
+      ),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(texto),
+            SizedBox(width: 10),
+            Icon(icono, color: colorIcono, size: 40),
+          ],
         ),
       ),
     );

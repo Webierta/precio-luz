@@ -11,13 +11,13 @@ class Head extends StatelessWidget {
         children: <Widget>[
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            child: FittedBox(
+            child: const FittedBox(
               child: Text('App PVPC'),
             ),
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            child: FittedBox(
+            child: const FittedBox(
               child: Text('Precio de la luz por horas'),
             ),
           ),

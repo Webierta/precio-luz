@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:url_launcher/url_launcher.dart';
 
-import 'head.dart';
+import '../widgets/head.dart';
 
 class DonationPage extends StatelessWidget {
   const DonationPage();
 
   @override
   Widget build(BuildContext context) {
-    void _launchURL() async {
-      const _url = 'https://www.paypal.com/donate?hosted_button_id=986PSAHLH6N4L';
-      if (await canLaunch(_url)) {
-        await launch(_url);
+    const String btcAddress = '15ZpNzqbYFx9P7wg4U438JMwZr2q3W6fkS';
+    const String urlPayPal = 'https://www.paypal.com/donate?hosted_button_id=986PSAHLH6N4L';
+    const String urlGitHub = 'https://github.com/Webierta/precio-luz/issues';
+
+    void _launchURL(String url) async {
+      if (await canLaunch(url)) {
+        await launch(url);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Could not launch PayPal payment website.'),
@@ -34,14 +37,22 @@ class DonationPage extends StatelessWidget {
             ),
             Divider(),
             SizedBox(height: 10.0),
-            Text('Esta App es Software libre y de Código Abierto.\n\n'
-                'Puedes colaborar con el desarrollo de ésta y otras aplicaciones con una pequeña '
-                'aportación a mi monedero de Bitcoins o vía PayPal:'),
-            //Text('Scan this QR code with your wallet application:'),
-            /*FractionallySizedBox(
-              widthFactor: 0.4,
-              child: Image.asset('assets/images/bitcoin_logo.png'),
-            ),*/
+            Text('Esta App es Software libre y de Código Abierto. Por favor considera colaborar '
+                'para mantener activo el desarrollo de esta App.'),
+            SizedBox(height: 10.0),
+            Text('¿Crees que has encontrado un problema? Identificar y corregir errores hace que '
+                'esta App sea mejor para todos. Informa de un error aquí:'),
+            IconButton(
+              onPressed: () => _launchURL(urlGitHub),
+              icon: const Icon(
+                Icons.bug_report,
+                size: 40,
+                color: Color(0xFF4CAF50),
+              ),
+            ),
+            SizedBox(height: 10.0),
+            Text('Puedes colaborar con el desarrollo de ésta y otras aplicaciones con una pequeña '
+                'aportación a mi monedero de Bitcoins o vía PayPal.'),
             const Align(
               alignment: Alignment.topLeft,
               child: Padding(
@@ -122,7 +133,7 @@ class DonationPage extends StatelessWidget {
                   elevation: 10.0,
                   padding: EdgeInsets.all(10),
                 ),
-                onPressed: _launchURL,
+                onPressed: () => _launchURL(urlPayPal),
                 child: Image.asset('assets/images/paypal_logo.png'),
               ),
             ),
@@ -132,5 +143,3 @@ class DonationPage extends StatelessWidget {
     );
   }
 }
-
-const String btcAddress = '15ZpNzqbYFx9P7wg4U438JMwZr2q3W6fkS';

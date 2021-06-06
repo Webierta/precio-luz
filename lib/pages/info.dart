@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'head.dart';
+import '../widgets/read_file.dart';
+import '../widgets/head.dart';
 
 class Info extends StatelessWidget {
   @override
@@ -22,25 +23,13 @@ class Info extends StatelessWidget {
                 ),
                 Divider(),
                 SizedBox(height: 10.0),
-                _textoABout(context),
+                //_textoABout(context),
+                const ReadFile(archivo: 'assets/files/info.txt'),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  FutureBuilder<String> _textoABout(BuildContext context) {
-    return FutureBuilder(
-      future: DefaultAssetBundle.of(context).loadString('assets/files/info.txt'),
-      builder: (context, snapshot) {
-        return Text(
-          snapshot.data ?? 'Error: archivo no encontrado',
-          softWrap: true,
-          style: TextStyle(fontSize: 22, color: Colors.black87),
-        );
-      },
     );
   }
 }
