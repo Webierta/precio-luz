@@ -22,7 +22,6 @@ class Datos {
   }
 
   Future getPreciosHoras(String fecha, Source source) async {
-    //print('API');
     var url = 'https://api.esios.ree.es/archives/70/download_json?date=$fecha';
     var prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
@@ -70,7 +69,6 @@ class Datos {
   }
 
   Future getPreciosHorasFile(String fecha) async {
-    //print('FILE');
     var url = 'https://api.esios.ree.es/archives/80/download?date=$fecha';
     HttpClientRequest request;
     HttpClientResponse response;
@@ -132,15 +130,14 @@ class Datos {
     return '${pos}h - ${pos + 1}h';
   }
 
-  int getHour(List<double> precios, double precio) {
-    return precios.indexOf(precio);
+  int getHour(List<double> precios, double precio, [start = 0]) {
+    return precios.indexOf(precio, start);
   }
 
   DateTime getDataTime(String fecha, int hora) {
     //var hora = getHour(precios, precio);
     var fechaString = '$fecha $hora';
     DateTime date = DateFormat('yyyy-MM-dd H').parse(fechaString);
-    // print(date); //TODO : limpiar
     return date;
   }
 

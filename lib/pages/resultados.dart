@@ -35,7 +35,7 @@ class _ResultadoState extends State<Resultado> {
   Widget build(BuildContext context) {
     DateTime hoy = DateTime.now().toLocal();
     int hora = hoy.hour;
-    String horaMin = DateFormat('HH:mm').format(hoy);
+    String horaMin = DateFormat('H:m').format(hoy);
     double precioHoy = _dataHoy.getPrecio(_dataHoy.preciosHora, hora);
 
     var periodoAhora = Tarifa.getPeriodo(DateTime.now().toLocal());
@@ -332,21 +332,31 @@ class ColumnaPage extends StatelessWidget {
               int _index;
               if (page == 2) {
                 precios = data.preciosHora;
-                //_colorPeriodo = getColorPeriodo(index);
                 _index = index;
-                //print('INDEX 1: $_index');
-                //_colorPeriodo = Tarifa.getColorPeriodo(periodo);
               } else {
                 precios = List.from(data.preciosHora);
                 precios.sort();
-                //_colorPeriodo = getColorPeriodo(data.getHour(data.preciosHora, precios[index]));
-                _index = data.getHour(data.preciosHora, precios[index]);
-                //print('INDEX 2: $_index');
+                //CHEQUEAR SI HAY PRECIOS REPETIDOS
+                var preciosCheck = [];
+                var indexDuples = [];
+                for (var i = 0; i < precios.length; i++) {
+                  if (preciosCheck.contains(precios[i])) {
+                    indexDuples.add(i);
+                  } else {
+                    preciosCheck.add(precios[i]);
+                  }
+                }
+                if (indexDuples.contains(index)) {
+                  _index = data.getHour(precios, precios[index], precios.indexOf(precios[index]));
+                  _index = _index == -1 ? data.getHour(data.preciosHora, precios[index]) : _index;
+                } else {
+                  _index = data.getHour(data.preciosHora, precios[index]);
+                }
               }
               Color _color = Tarifa.getColorFondo(precios[index]);
-              var periodo = Tarifa.getPeriodo(data.getDataTime(data.fecha, _index));
-              var _colorPeriodo = Tarifa.getColorPeriodo(periodo);
-              var precioMedio = data.calcularPrecioMedio(data.preciosHora);
+              Periodo periodo = Tarifa.getPeriodo(data.getDataTime(data.fecha, _index));
+              Color _colorPeriodo = Tarifa.getColorPeriodo(periodo);
+              double precioMedio = data.calcularPrecioMedio(data.preciosHora);
               double desviacion = precios[index] - precioMedio;
               return Container(
                 decoration: BoxDecoration(
@@ -363,7 +373,7 @@ class ColumnaPage extends StatelessWidget {
                   title: page == 2
                       ? Text('${(precios[index]).toStringAsFixed(5)} €/kWh')
                       : Text(
-                          '${data.getHora(data.preciosHora, precios[index])}',
+                          '${_index}h - ${_index + 1}h',
                           style: Theme.of(context).textTheme.headline6,
                         ),
                   subtitle: page == 2
