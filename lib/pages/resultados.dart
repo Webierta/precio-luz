@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -334,24 +336,15 @@ class ColumnaPage extends StatelessWidget {
                 precios = data.preciosHora;
                 _index = index;
               } else {
-                precios = List.from(data.preciosHora);
-                precios.sort();
-                //CHEQUEAR SI HAY PRECIOS REPETIDOS
-                var preciosCheck = [];
-                var indexDuples = [];
-                for (var i = 0; i < precios.length; i++) {
-                  if (preciosCheck.contains(precios[i])) {
-                    indexDuples.add(i);
-                  } else {
-                    preciosCheck.add(precios[i]);
-                  }
-                }
-                if (indexDuples.contains(index)) {
-                  _index = data.getHour(precios, precios[index], precios.indexOf(precios[index]));
-                  _index = _index == -1 ? data.getHour(data.preciosHora, precios[index]) : _index;
-                } else {
-                  _index = data.getHour(data.preciosHora, precios[index]);
-                }
+                var listaPrecios = List.from(data.preciosHora);
+                var mapPrecios = listaPrecios.asMap();
+                var sortedKeys = mapPrecios.keys.toList(growable: false)
+                  ..sort((k1, k2) => mapPrecios[k1].compareTo(mapPrecios[k2]));
+                LinkedHashMap<int, double> mapPreciosSorted = LinkedHashMap.fromIterable(sortedKeys,
+                    key: (k) => k, value: (k) => mapPrecios[k]);
+                precios = mapPreciosSorted.values.toList();
+                var listaKeys = mapPreciosSorted.keys.toList();
+                _index = listaKeys[index];
               }
               Color _color = Tarifa.getColorFondo(precios[index]);
               Periodo periodo = Tarifa.getPeriodo(data.getDataTime(data.fecha, _index));
