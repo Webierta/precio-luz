@@ -7,3 +7,5 @@ Esta nueva tarifa 2.0 TD cuenta con una discriminación horaria en tres periodos
 El término de facturación de energía se presenta en kilovatios hora (€/kWh) e incluye el término de energía de los peajes de acceso, los cargos y el coste de producción pero no incluyen impuestos. Tanto los datos descargados como los índices calculados a partir de ellos se presentan con 5 decimales.
 
 Los precios horarios son los mismos para todo el territorio español independientemente de la zona horaria. Los datos que muestra esta App son aplicables a todo el territorio español (península e islas) excepto Ceuta y Melilla.
+
+La App incluye una herramienta que calcula y ordena las franjas horarias más baratas del día (precios medios) para un intervalo determinado de tiempo. Por ejemplo, es útil para saber el mejor momento del día para poner consecutivamente la lavadora y la secadora.

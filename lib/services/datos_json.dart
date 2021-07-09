@@ -1,13 +1,14 @@
 class DatosPVPC {
-  String dia;
-  String hora;
+  //String dia;
+  //String hora;
   String precio;
-  DatosPVPC({this.dia, this.hora, this.precio});
+  //DatosPVPC({this.dia, this.hora, this.precio});
+  DatosPVPC({this.precio});
 
   factory DatosPVPC.fromJson(Map<String, dynamic> json) {
     return DatosPVPC(
-      dia: json['Dia'],
-      hora: json['Hora'],
+      //dia: json['Dia'],
+      //hora: json['Hora'],
       precio: json['PCB'],
     );
   }

@@ -1,10 +1,9 @@
-import 'dart:collection';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../widgets/tab_page_range.dart';
+import '../widgets/tab_page.dart';
 import '../widgets/texto_rich.dart';
-import '../utils/estados.dart';
 import '../utils/tarifa.dart';
 import '../services/datos.dart';
 import 'leyenda.dart';
@@ -20,7 +19,6 @@ class Resultado extends StatefulWidget {
 
 class _ResultadoState extends State<Resultado> {
   var _currentPage = 0;
-  ScrollController _controller = ScrollController();
   Datos _data;
   Datos _dataHoy;
   String _fecha;
@@ -37,7 +35,7 @@ class _ResultadoState extends State<Resultado> {
   Widget build(BuildContext context) {
     DateTime hoy = DateTime.now().toLocal();
     int hora = hoy.hour;
-    String horaMin = DateFormat('H:m').format(hoy);
+    String horaMin = DateFormat('HH:mm').format(hoy);
     double precioHoy = _dataHoy.getPrecio(_dataHoy.preciosHora, hora);
 
     var periodoAhora = Tarifa.getPeriodo(DateTime.now().toLocal());
@@ -52,17 +50,13 @@ class _ResultadoState extends State<Resultado> {
     var desviacionMax =
         _data.precioMax(_data.preciosHora) - _data.calcularPrecioMedio(_data.preciosHora);
 
-    var _pages = [
+    List<Widget> _pages = [
       Column(
-        // PAGE 1
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'Tarifa 2.0 TD',
-                style: Theme.of(context).textTheme.headline6,
-              ),
+              Text('Tarifa 2.0 TD', style: Theme.of(context).textTheme.headline6),
             ],
           ),
           Card(
@@ -222,18 +216,9 @@ class _ResultadoState extends State<Resultado> {
           Divider(color: Colors.blueGrey),
         ],
       ),
-      ColumnaPage(
-        page: 2,
-        fecha: _fecha,
-        titulo: 'Evolución del Precio en el día',
-        data: _data,
-      ),
-      ColumnaPage(
-        page: 3,
-        fecha: _fecha,
-        titulo: 'Horas por Precio ascendente',
-        data: _data,
-      ),
+      TabPage(page: 2, fecha: _fecha, titulo: 'Evolución del Precio en el día', data: _data),
+      TabPage(page: 3, fecha: _fecha, titulo: 'Horas por Precio ascendente', data: _data),
+      TabPageRange(fecha: _fecha, data: _data),
     ];
 
     return Scaffold(
@@ -241,10 +226,7 @@ class _ResultadoState extends State<Resultado> {
         title: Text('Precios por Horas'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
-              Icons.help,
-              color: Colors.white,
-            ),
+            icon: Icon(Icons.help, color: Colors.white),
             onPressed: () {
               return Navigator.push(
                 context,
@@ -257,7 +239,6 @@ class _ResultadoState extends State<Resultado> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(10.0),
-          controller: _controller,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -267,132 +248,37 @@ class _ResultadoState extends State<Resultado> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.lightbulb_outline),
             label: 'PVPC',
+            backgroundColor: Color(0xFF0D47A1),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.euro_symbol),
             label: 'PRECIO',
+            backgroundColor: Color(0xFF0D47A1),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
             label: 'HORAS',
+            backgroundColor: Color(0xFF0D47A1),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.timelapse),
+            label: 'FRANJAS',
+            backgroundColor: Color(0xFF0D47A1),
           ),
         ],
         currentIndex: _currentPage,
-        fixedColor: Colors.white,
-        backgroundColor: Colors.blue[900],
+        //type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.white, //fixedColor: Colors.white,
+        //backgroundColor: Color(0xFF0D47A1),
         unselectedItemColor: Colors.white60,
         onTap: (int inIndex) {
-          _controller.animateTo(_controller.position.minScrollExtent,
-              duration: Duration(milliseconds: 100), curve: Curves.easeIn);
           setState(() => _currentPage = inIndex);
         },
       ),
-    );
-  }
-}
-
-class ColumnaPage extends StatelessWidget {
-  final int page;
-  final String fecha;
-  final String titulo;
-  final Datos data;
-  const ColumnaPage({Key key, this.page, this.fecha, this.titulo, this.data}) : super(key: key);
-
-  Color getColorPeriodo(int index) {
-    var periodo = Tarifa.getPeriodo(data.getDataTime(data.fecha, index));
-    if (periodo == Periodo.valle) {
-      return Colors.green[300];
-    } else if (periodo == Periodo.punta) {
-      return Colors.red[300];
-    } else {
-      return Colors.amberAccent;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Tarifa 2.0 TD', style: Theme.of(context).textTheme.headline6),
-          ],
-        ),
-        Text(fecha, style: Theme.of(context).textTheme.subtitle1),
-        Text(titulo, style: Theme.of(context).textTheme.bodyText1),
-        ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: data.preciosHora.length,
-            itemBuilder: (context, index) {
-              List<double> precios;
-              int _index;
-              if (page == 2) {
-                precios = data.preciosHora;
-                _index = index;
-              } else {
-                var listaPrecios = List.from(data.preciosHora);
-                var mapPrecios = listaPrecios.asMap();
-                var sortedKeys = mapPrecios.keys.toList(growable: false)
-                  ..sort((k1, k2) => mapPrecios[k1].compareTo(mapPrecios[k2]));
-                LinkedHashMap<int, double> mapPreciosSorted = LinkedHashMap.fromIterable(sortedKeys,
-                    key: (k) => k, value: (k) => mapPrecios[k]);
-                precios = mapPreciosSorted.values.toList();
-                var listaKeys = mapPreciosSorted.keys.toList();
-                _index = listaKeys[index];
-              }
-              Color _color = Tarifa.getColorFondo(precios[index]);
-              Periodo periodo = Tarifa.getPeriodo(data.getDataTime(data.fecha, _index));
-              Color _colorPeriodo = Tarifa.getColorPeriodo(periodo);
-              double precioMedio = data.calcularPrecioMedio(data.preciosHora);
-              double desviacion = precios[index] - precioMedio;
-              return Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(width: 0.8, color: Colors.grey),
-                    left: BorderSide(width: 10.0, color: _colorPeriodo),
-                  ),
-                  color: _color,
-                ),
-                child: ListTile(
-                  leading: page == 2
-                      ? Tarifa.getIconCara(precios, precios[index])
-                      : Text('${index + 1}'),
-                  title: page == 2
-                      ? Text('${(precios[index]).toStringAsFixed(5)} €/kWh')
-                      : Text(
-                          '${_index}h - ${_index + 1}h',
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                  subtitle: page == 2
-                      ? Text('${index}h - ${index + 1}h')
-                      : Text('${precios[index].toStringAsFixed(5)} €/kWh'),
-                  trailing: Column(
-                    children: [
-                      Flexible(
-                        child: Icon(
-                          desviacion > 0 ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                          size: 45,
-                          color: desviacion > 0 ? Colors.red : Colors.green,
-                        ),
-                      ),
-                      Flexible(
-                        child: Text(
-                          '${desviacion.toStringAsFixed(4)} €',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-      ],
     );
   }
 }

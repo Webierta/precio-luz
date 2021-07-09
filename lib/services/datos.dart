@@ -12,7 +12,7 @@ import 'datos_json.dart';
 
 class Datos {
   String fecha = '';
-  List<String> horas = <String>[];
+  //List<String> horas = <String>[];
   List<double> preciosHora = <double>[];
   Status status;
 
@@ -43,21 +43,26 @@ class Datos {
       } else if (response.statusCode == 200) {
         Map<String, dynamic> objJson = jsonDecode(response.body);
         var datosJson = DatosJson.fromJson(objJson);
-        List<String> listaDias = <String>[];
-        List<String> listaHoras = <String>[];
+        //List<String> listaDias = <String>[];
+        //List<String> listaHoras = <String>[];
         List<String> listaPrecios = <String>[];
         for (var obj in datosJson.datosPVPC) {
-          listaDias.add(obj.dia);
-          listaHoras.add(obj.hora);
+          //listaDias.add(obj.dia);
+          //listaHoras.add(obj.hora);
           listaPrecios.add(obj.precio);
         }
-        fecha = listaDias.first;
-        horas = List.from(listaHoras);
+        //fecha = listaDias.first;
+        //horas = List.from(listaHoras);
         for (var precio in listaPrecios) {
           var precioDouble = roundDouble((double.tryParse(precio.replaceAll(',', '.')) / 1000), 5);
           preciosHora.add(precioDouble);
         }
-        status = Status.ok;
+        /*if (preciosHora.length == 24) {
+          status = Status.ok;
+        } else {
+          status = Status.error;
+        }*/
+        status = preciosHora.length == 24 ? Status.ok : Status.error;
       } else {
         status = Status.noAcceso;
       }

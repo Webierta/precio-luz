@@ -194,6 +194,7 @@ class _HomeState extends State<Home> {
     if (_datos.status == Status.accessDenied) {
       await _datos.getPreciosHorasFile(_datos.fecha);
     }
+    //await _datos.getPreciosHorasFile(_datos.fecha);
 
     var _hoyDate = DateFormat('yyyy-MM-dd').format(hoy);
     if (noPublicado == true && _datos.status == Status.error) {
