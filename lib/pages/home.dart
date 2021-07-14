@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        title: Text('App PVPC'),
+        title: Text('Consulta PVPC'),
         appBar: AppBar(),
       ),
       body: SafeArea(

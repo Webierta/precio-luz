@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class TextoRich extends StatelessWidget {
   final String texto;
   final Color color;
-  const TextoRich({Key key, this.texto, this.color}) : super(key: key);
+
+  const TextoRich(this.texto, this.color);
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,6 @@
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
+import 'container_time.dart';
 import '../services/datos.dart';
 import '../utils/tarifa.dart';
 import 'head_tab.dart';
@@ -17,166 +18,171 @@ class _TabPageRangeState extends State<TabPageRange> {
   Duration _duration = Duration(hours: 0, minutes: 00);
   var horas = 0;
   var minutos = 0;
+  int franjas = 0;
+  Map<Duration, double> mapPreciosSorted = {};
+  bool _calculando = false;
+
+  int getFranjas({int duracion, int step}) {
+    // franjas o intervalos = (((total - (duration - step)) / 60)) * ((60 / step))).truncate()
+    const total = 1440; // 24 horas en minutos
+    var paso = step == 0 ? 60 : step;
+    return (((total - (duracion - paso)) / 60) * ((60 / paso))).truncate();
+  }
+
+  void getPreciosFranjas() {
+    Map<Duration, double> mapInicioPrecios = {};
+    List<double> preciosFranjas = [];
+    List<double> preciosHora = widget.data.preciosHora;
+    var startList = List<Duration>.generate(
+        franjas, (int index) => Duration(minutes: index * (minutos == 0 ? 60 : minutos)));
+
+    for (var i = 0; i < franjas; i++) {
+      // PUNTOS DE INICIO Y FIN DE CADA INTERVALO
+      var start = startList[i];
+      var stop = start + _duration;
+      // HORAS Y MINUTOS PARA CALCULAR EL PRECIO DE CADA INTERVALO
+      var horasFranja = [];
+      var minStop = int.tryParse(stop.toString().split(':')[1]) ?? 0;
+      var horaLimite = minStop == 0 ? stop.inHours - 1 : stop.inHours;
+      for (var i = start.inHours; i <= horaLimite; i++) {
+        horasFranja.add(i);
+      }
+      var minFranja = List<int>.generate(horasFranja.length, (int index) => 60);
+      minFranja.first = 60 - (int.tryParse(start.toString().split(':')[1]) ?? 0);
+      minFranja.last = int.tryParse(stop.toString().split(':')[1]) ?? 0;
+      // PRECIO * MINUTOS DE CADA INTERVALO
+      var preciosRango = [];
+      for (var i = 0; i < horasFranja.length; i++) {
+        var minutosFranja = minFranja[i] == 0 ? 60 : minFranja[i];
+        preciosRango.add(preciosHora[horasFranja[i]] * minutosFranja);
+      }
+      // PRECIOS MEDIOS
+      var media = preciosRango.reduce((a, b) => a + b) / _duration.inMinutes;
+      preciosFranjas.add(media);
+      mapInicioPrecios[startList[i]] = preciosFranjas[i];
+    }
+    // ORDENA LOS PRECIOS
+    var sortedKeys = mapInicioPrecios.keys.toList(growable: false)
+      ..sort((k1, k2) => mapInicioPrecios[k1].compareTo(mapInicioPrecios[k2]));
+    Map<Duration, double> mapPrecios = Map.fromIterable(
+      sortedKeys,
+      key: (k) => k,
+      value: (k) => mapInicioPrecios[k],
+    );
+    if (mounted) {
+      setState(() => mapPreciosSorted = Map.from(mapPrecios));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         HeadTab(fecha: widget.fecha, titulo: 'Franjas horarias más baratas'),
-        Text('Selecciona la duración (se redondea en tramos de 30 minutos; máximo 7:00):'),
-        SizedBox(height: 10),
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text('Selecciona la duración (máximo 24:00):'),
+        ),
+        const SizedBox(height: 10),
         InkWell(
           onTap: () async {
             Duration resultingDuration = await showDurationPicker(
               context: context,
-              initialTime: _duration, //Duration(minutes: 30),
-              //snapToMins: 30.0,
+              initialTime: _duration,
+              snapToMins: 10,
             );
-            setState(() {
-              _duration = resultingDuration ?? _duration;
-              horas = _duration.inHours; // > 5 ? 6 : _duration.inHours;
-              minutos = int.tryParse(_duration.toString().split(':')[1]) ?? 0;
-              if (minutos > 45) {
-                horas++;
-                minutos = 0;
-              } else if (minutos > 15) {
-                minutos = 30;
-              } else {
-                minutos = 0;
+            if (resultingDuration != null) {
+              if (mounted) {
+                setState(() {
+                  _calculando = true;
+                  _duration = resultingDuration ?? _duration;
+                  horas = _duration.inHours; // > 5 ? 6 : _duration.inHours;
+                  minutos = int.tryParse(_duration.toString().split(':')[1]) ?? 0;
+                  _duration = Duration(hours: horas, minutes: minutos);
+                  if (_duration.inMinutes > 1440) {
+                    _duration = Duration(hours: 24, minutes: 0);
+                    horas = 24;
+                    minutos = 0;
+                  }
+                  franjas = getFranjas(duracion: _duration.inMinutes, step: minutos);
+                });
               }
-              _duration = Duration(hours: horas, minutes: minutos);
-              if (_duration.inMinutes > 420) {
-                _duration = Duration(hours: 7, minutes: 0);
-                horas = 7;
-                minutos = 0;
+              getPreciosFranjas();
+              await Future.delayed(Duration(milliseconds: franjas * 10)); // franjas * 25
+              if (mounted) {
+                setState(() => _calculando = false);
               }
-            });
+            }
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple[100],
-                  border: Border.all(color: Colors.purple),
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-                child: Text(
-                  ' ${_duration.toString().split(':').first} ',
-                  style: TextStyle(fontSize: 28, color: Colors.purple),
-                ),
-              ),
-              Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple[100],
-                  border: Border.all(color: Colors.purple),
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
-                child: Text(
-                  '${_duration.toString().split(':')[1]}',
-                  style: TextStyle(fontSize: 28, color: Colors.purple),
-                ),
-              ),
+              ContainerTime(numero: '${_duration.toString().split(':').first}'),
+              const Text(' : ', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+              ContainerTime(numero: '${_duration.toString().split(':')[1]}'),
             ],
           ),
         ),
-        Divider(),
+        const Divider(),
         _duration.inMinutes < 61
-            ? Text(
+            ? const Text(
                 'La duración no supera una hora: puedes comprobar la hora más barata en la pestaña Horas.')
-            : ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: _duration.inMinutes % 60 > 0
-                    ? 48 - ((_duration.inMinutes ~/ minutos) - 1)
-                    : 24 - (_duration.inHours - 1), // * 2
-                itemBuilder: (context, index) {
-                  // LISTA DE PRECIOS
-                  List<double> preciosHora = widget.data.preciosHora;
-                  List<double> precios = [];
-                  if (minutos == 0) {
-                    precios = List.from(preciosHora);
-                  } else {
-                    for (var precio in preciosHora) {
-                      precios.add((minutos * precio) / 60); // precio / 2 en 30 m
-                      precios.add((minutos * precio) / 60);
-                    }
-                  }
-                  // PRECIOS ORDENADOS
-                  List<double> preciosOrdenados;
-                  List<int> listaKeys;
-                  List<double> preciosFranjas = [];
-                  int franjas = _duration.inMinutes % 60 > 0
-                      ? 48 - ((_duration.inMinutes ~/ minutos) - 1)
-                      : 24 - (_duration.inHours - 1); // x 2
-                  for (var i = 0; i < franjas; i++) {
-                    List<double> rangoPrecios;
-                    if (minutos == 0) {
-                      rangoPrecios = precios.getRange(i, i + horas).toList(); // ?? sublist
-                    } else {
-                      rangoPrecios =
-                          precios.getRange(i, i + (_duration.inMinutes ~/ minutos)).toList();
-                    }
-                    // CALCULO DE PRECIOS MEDIOS
-                    double suma = 0;
-                    for (var precio in rangoPrecios) {
-                      suma = suma + precio;
-                    }
-                    var mediaEnMinutos = suma / _duration.inMinutes; //horasPorIntervalo
-                    var mediaEnHoras = mediaEnMinutos * 60;
-                    preciosFranjas.add(mediaEnHoras);
-                    // ORDENA LOS PRECIOS
-                    var mapPreciosFranjas = preciosFranjas.asMap();
-                    var sortedKeys = mapPreciosFranjas.keys.toList(growable: false)
-                      ..sort((k1, k2) => mapPreciosFranjas[k1].compareTo(mapPreciosFranjas[k2]));
-                    Map<int, double> mapPreciosSorted = Map.fromIterable(
-                      sortedKeys,
-                      key: (k) => k,
-                      value: (k) => mapPreciosFranjas[k],
-                    );
-                    preciosOrdenados = mapPreciosSorted.values.toList();
-                    listaKeys = mapPreciosSorted.keys.toList();
-                  }
-                  // OBTIENE HORAS Y MINUTOS DE CADA FRANJA
-                  int indexFranja;
-                  String tituloListTile;
-                  if (minutos == 0) {
-                    indexFranja = listaKeys[index];
-                    tituloListTile = '${indexFranja}h - ${indexFranja + horas}h';
-                  } else {
-                    int indexFranja = listaKeys[index] ~/ 2;
-                    int minFranja = listaKeys[index] % 2 == 0 ? 0 : minutos;
-                    Duration hora1 = Duration(hours: indexFranja, minutes: minFranja);
-                    Duration hora2 = hora1 + _duration;
-                    int horaLapso = hora2.inHours;
-                    int minLapso = int.tryParse(hora2.toString().split(':')[1]) ?? 0;
-                    tituloListTile = '$indexFranja:${minFranja.toString().padLeft(2, '0')} - '
-                        '$horaLapso:${minLapso.toString().padLeft(2, '0')}';
-                  }
-                  Color _color = Tarifa.getColorFondo(preciosOrdenados[index]);
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(width: 0.8, color: Colors.grey),
-                        left: BorderSide(width: 10.0, color: Colors.grey),
+            : _calculando == true
+                ? Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.width / 2,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 20,
+                        backgroundColor: Colors.grey,
                       ),
-                      color: _color,
                     ),
-                    child: ListTile(
-                      leading: Text('${index + 1}'),
-                      title: Text(
-                        tituloListTile,
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      subtitle: Text('${(preciosOrdenados[index]).toStringAsFixed(5)} €/kWh'),
+                  )
+                : Container(
+                    //height: 73.0 * franjas,
+                    constraints: BoxConstraints(
+                      maxHeight: 100.0 * franjas,
                     ),
-                  );
-                }),
+                    child: ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        //cacheExtent: 10000.0 * franjas.value,
+                        shrinkWrap: true,
+                        itemCount: franjas,
+                        itemBuilder: (context, index) {
+                          List<double> preciosOrdenados = mapPreciosSorted.values.toList();
+                          final precioOrdenado = preciosOrdenados[index];
+                          List<Duration> listaKeys = mapPreciosSorted.keys.toList();
+                          // TITULO CON HORAS Y MINUTOS DE CADA FRANJA
+                          final timeFranja = listaKeys[index];
+                          final horaInicioFranja = timeFranja.inHours;
+                          final minInicioFranja =
+                              int.tryParse(timeFranja.toString().split(':')[1]) ?? 0;
+                          final Duration hora2 = timeFranja + _duration;
+                          final horaLapso = hora2.inHours;
+                          final minLapso = int.tryParse(hora2.toString().split(':')[1]) ?? 0;
+                          final _color = Tarifa.getColorFondo(precioOrdenado);
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: const Border(
+                                bottom: BorderSide(width: 0.8, color: Colors.grey),
+                                left: BorderSide(width: 10.0, color: Colors.grey),
+                              ),
+                              color: _color,
+                            ),
+                            child: ListTile(
+                              leading: Text('${index + 1}'),
+                              title: Text(
+                                '$horaInicioFranja:${minInicioFranja.toString().padLeft(2, '0')} - '
+                                '$horaLapso:${minLapso.toString().padLeft(2, '0')}',
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                              subtitle: Text('${(precioOrdenado.toStringAsFixed(5))} €/kWh'),
+                            ),
+                          );
+                        }),
+                  ),
       ],
     );
   }

@@ -41,7 +41,7 @@ class _InicioState extends State<Inicio> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        title: Text('App PVPC'),
+        title: Text('Acceso PVPC'),
         appBar: AppBar(),
       ),
       body: SafeArea(

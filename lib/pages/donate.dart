@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:url_launcher/url_launcher.dart';
@@ -42,12 +44,27 @@ class DonationPage extends StatelessWidget {
             SizedBox(height: 10.0),
             Text('¿Crees que has encontrado un problema? Identificar y corregir errores hace que '
                 'esta App sea mejor para todos. Informa de un error aquí:'),
-            IconButton(
-              onPressed: () => _launchURL(urlGitHub),
-              icon: const Icon(
-                Icons.bug_report,
-                size: 40,
-                color: Color(0xFF4CAF50),
+            SizedBox(height: 5),
+            FractionallySizedBox(
+              widthFactor: 0.5,
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Color(0xFF4CAF50),
+                  border: Border.all(color: Colors.green[900], width: 2.0),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Center(
+                  child: IconButton(
+                    onPressed: () => _launchURL(urlGitHub),
+                    icon: const Icon(
+                      Icons.bug_report,
+                      size: 40,
+                      color: Colors.white,
+                    ),
+                    //padding: const EdgeInsets.all(10),
+                  ),
+                ),
               ),
             ),
             SizedBox(height: 10.0),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../pages/leyenda.dart';
 import '../pages/about.dart';
 import '../pages/donate.dart';
 import '../pages/info.dart';
@@ -14,6 +15,15 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: title,
       actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.help, color: Colors.white),
+          onPressed: () {
+            return Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Leyenda()),
+            );
+          },
+        ),
         PopupMenuButton(
           itemBuilder: (BuildContext context) {
             return [
