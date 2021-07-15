@@ -4,6 +4,7 @@ import '../widgets/appbar.dart';
 import '../widgets/tab_page_range.dart';
 import '../widgets/tab_page.dart';
 import '../services/datos.dart';
+import 'grafico.dart';
 
 class Resultado extends StatefulWidget {
   final Datos data;
@@ -102,6 +103,17 @@ class _ResultadoState extends State<Resultado> {
           }
         },
       ),
+      floatingActionButton: _currentPage == 1
+          ? FloatingActionButton(
+              child: Icon(Icons.bar_chart),
+              onPressed: () {
+                return Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Grafico(data: widget.data)),
+                );
+              },
+            )
+          : null,
     );
   }
 }
