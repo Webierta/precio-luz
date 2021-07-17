@@ -13,7 +13,7 @@ class TextoRich extends StatelessWidget {
         child: Container(
             padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(8), // 4
               color: color,
             ),
             child: Text(texto, style: Theme.of(context).textTheme.headline6)),

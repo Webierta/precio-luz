@@ -13,25 +13,35 @@ class Tarifa {
     }
   }
 
-  static Icon getIconCara(List<double> preciosHoras, double valor) {
+  static Color getColorBorder(double precio) {
+    if (precio < 0.10) {
+      return Colors.lightGreen;
+    } else if (precio < 0.15) {
+      return Colors.yellow;
+    } else {
+      return Colors.red;
+    }
+  }
+
+  static Icon getIconCara(List<double> preciosHoras, double valor, {double size = 40.0}) {
     List<double> preciosAs = List.from(preciosHoras);
     preciosAs.sort();
     if (preciosAs.indexWhere((v) => v == valor) < 8) {
       return Icon(
         Icons.sentiment_very_satisfied, //stars, // grade, //flash_on,
-        size: 30,
+        size: size,
         color: Colors.green[700],
       );
     } else if (preciosAs.indexWhere((v) => v == valor) > 15) {
       return Icon(
         Icons.sentiment_very_dissatisfied, //warning,
-        size: 30,
+        size: size,
         color: Colors.deepOrange[700],
       );
     } else {
       return Icon(
         Icons.sentiment_neutral,
-        size: 30,
+        size: size,
         color: Colors.amber[700],
       );
     }
@@ -75,7 +85,7 @@ class Tarifa {
     }
   }
 
-  static Icon getIconPeriodo(Periodo periodo) {
+  static Icon getIconPeriodo(Periodo periodo, {double size = 30.0}) {
     var _icono;
     var _color;
     if (periodo == Periodo.valle) {
@@ -88,6 +98,6 @@ class Tarifa {
       _icono = Icons.trending_neutral;
       _color = Colors.yellow;
     }
-    return Icon(_icono, size: 30, color: _color);
+    return Icon(_icono, size: size, color: _color);
   }
 }

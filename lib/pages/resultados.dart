@@ -57,7 +57,7 @@ class _ResultadoState extends State<Resultado> {
       appBar: BaseAppBar(title: const Text('Datos PVPC'), appBar: AppBar()),
       body: SafeArea(
         child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
+          scrollDirection: Axis.vertical, //TODO: REVISAR
           physics: ClampingScrollPhysics(),
           padding: const EdgeInsets.all(10.0),
           controller: _scrollController,
@@ -109,7 +109,12 @@ class _ResultadoState extends State<Resultado> {
               onPressed: () {
                 return Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Grafico(data: widget.data)),
+                  MaterialPageRoute(
+                    builder: (context) => Grafico(
+                      data: widget.data,
+                      fecha: widget.fecha,
+                    ),
+                  ),
                 );
               },
             )
