@@ -10,13 +10,13 @@ class Head extends StatelessWidget {
       child: Column(
         children: <Widget>[
           SizedBox(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width / 2,
             child: const FittedBox(
               child: Text('App PVPC'),
             ),
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width / 2,
             child: const FittedBox(
               child: Text('Precio de la luz por horas'),
             ),

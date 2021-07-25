@@ -39,14 +39,22 @@ class DonationPage extends StatelessWidget {
             ),
             Divider(),
             SizedBox(height: 10.0),
-            Text('Esta App es Software libre y de Código Abierto. Por favor considera colaborar '
-                'para mantener activo el desarrollo de esta App.'),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                  'Esta App es Software libre y de Código Abierto. Por favor considera colaborar '
+                  'para mantener activo el desarrollo de esta App.'),
+            ),
             SizedBox(height: 10.0),
-            Text('¿Crees que has encontrado un problema? Identificar y corregir errores hace que '
-                'esta App sea mejor para todos. Informa de un error aquí:'),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                  '¿Crees que has encontrado un problema? Identificar y corregir errores hace que '
+                  'esta App sea mejor para todos. Informa de un error aquí:'),
+            ),
             SizedBox(height: 5),
             FractionallySizedBox(
-              widthFactor: 0.5,
+              widthFactor: 0.3,
               child: Container(
                 padding: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
@@ -68,8 +76,12 @@ class DonationPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.0),
-            Text('Puedes colaborar con el desarrollo de ésta y otras aplicaciones con una pequeña '
-                'aportación a mi monedero de Bitcoins o vía PayPal.'),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                  'Puedes colaborar con el desarrollo de ésta y otras aplicaciones con una pequeña '
+                  'aportación a mi monedero de Bitcoins o vía PayPal.'),
+            ),
             const Align(
               alignment: Alignment.topLeft,
               child: Padding(
@@ -78,7 +90,7 @@ class DonationPage extends StatelessWidget {
               ),
             ),
             FractionallySizedBox(
-              widthFactor: 0.7,
+              widthFactor: 0.5,
               child: Image.asset('assets/images/Bitcoin_QR.png'),
             ),
             const Align(
@@ -138,9 +150,12 @@ class DonationPage extends StatelessWidget {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
-              child: Text('Donate vía Paypal (open the PayPal payment website):'),
+            Align(
+              alignment: Alignment.topLeft,
+              child: const Padding(
+                padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
+                child: Text('Donate vía Paypal (open the PayPal payment website):'),
+              ),
             ),
             FractionallySizedBox(
               widthFactor: 0.4,

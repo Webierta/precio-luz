@@ -22,7 +22,7 @@ class About extends StatelessWidget {
                   color: Colors.cyan[700],
                 ),
                 Text(
-                  'Versión 2.2.1',
+                  'Versión 2.2.2',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
@@ -30,14 +30,8 @@ class About extends StatelessWidget {
                   style: Theme.of(context).textTheme.subtitle1,
                   textAlign: TextAlign.center,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: FittedBox(
-                      child: Text('All Wrongs Reserved. Licencia GPLv3'),
-                    ),
-                  ),
+                FittedBox(
+                  child: Text('All Wrongs Reserved. Licencia GPLv3'),
                 ),
                 Divider(),
                 SizedBox(height: 10.0),

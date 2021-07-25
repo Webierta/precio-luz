@@ -38,6 +38,7 @@ class _ResultadoState extends State<Resultado> {
         fecha: widget.fecha,
         data: widget.data,
         dataHoy: widget.dataHoy,
+        safePadding: MediaQuery.of(context).padding.top,
       ),
       TabPage(
           page: 2,
@@ -52,14 +53,13 @@ class _ResultadoState extends State<Resultado> {
       ),
       TabPageRange(fecha: widget.fecha, data: widget.data),
     ];
-
     return Scaffold(
       appBar: BaseAppBar(title: const Text('Datos PVPC'), appBar: AppBar()),
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical, //TODO: REVISAR
           physics: ClampingScrollPhysics(),
-          padding: const EdgeInsets.all(10.0),
+          //padding: const EdgeInsets.all(10.0),
           controller: _scrollController,
           child: _pages.elementAt(_currentPage),
         ),
