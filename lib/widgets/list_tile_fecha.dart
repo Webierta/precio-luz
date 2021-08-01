@@ -28,9 +28,15 @@ class ListTileFecha extends StatelessWidget {
           ),
         ],
       ),
-      title: Text(
-        '$hora',
-        style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w200),
+      title: Align(
+        alignment: Alignment.topLeft,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            '$hora',
+            style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w200),
+          ),
+        ),
       ),
       subtitle: Text('$precio €/kWh', style: const TextStyle(color: Colors.white)),
       trailing: Column(

@@ -13,7 +13,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: title,
+      title: FittedBox(child: title),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.help, color: Colors.white),

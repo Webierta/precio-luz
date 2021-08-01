@@ -145,7 +145,8 @@ class Leyenda extends StatelessWidget {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                                 color: Colors.yellow[50],
-                                child: Text('Intermedio', textAlign: TextAlign.center),
+                                child: FittedBox(
+                                    child: Text('Intermedio', textAlign: TextAlign.center)),
                               ),
                             ),
                             Expanded(

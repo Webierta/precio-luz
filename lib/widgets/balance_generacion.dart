@@ -36,9 +36,11 @@ class BalanceGeneracion extends StatelessWidget {
           ), //style: textBlanco),
           Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: Text(
-              '${calcularPorcentaje(sortedMap[title])}%',
-              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w100),
+            child: FittedBox(
+              child: Text(
+                '${calcularPorcentaje(sortedMap[title])}%',
+                style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w100),
+              ),
             ),
           ),
         ],
