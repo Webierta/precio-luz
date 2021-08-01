@@ -149,4 +149,16 @@ class Datos {
   double getPrecio(List<double> precios, int hora) {
     return precios[hora];
   }
+
+  Map<int, double> ordenarPrecios(List<double> listaPrecios) {
+    var mapPrecios = listaPrecios.asMap();
+    var sortedKeys = mapPrecios.keys.toList(growable: false)
+      ..sort((k1, k2) => mapPrecios[k1].compareTo(mapPrecios[k2]));
+    Map<int, double> mapPreciosSorted = Map.fromIterable(
+      sortedKeys,
+      key: (k) => k,
+      value: (k) => mapPrecios[k],
+    );
+    return mapPreciosSorted;
+  }
 }

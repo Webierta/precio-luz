@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../services/datos_generacion.dart';
 import '../utils/estados.dart';
 import '../widgets/appbar.dart';
 import '../services/datos.dart';
@@ -22,6 +23,8 @@ class _HomeState extends State<Home> {
   bool noPublicado = false;
   bool seguirConsulta = true;
   bool _progressActive = false;
+  DatosGeneracion _datosGeneracion = DatosGeneracion();
+  Future<Map<String, double>> _generacion;
 
   @override
   void initState() {
@@ -37,7 +40,7 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        title: Text('Consulta PVPC'),
+        title: const Text('Consulta PVPC'),
         appBar: AppBar(),
       ),
       body: SafeArea(
@@ -55,26 +58,26 @@ class _HomeState extends State<Home> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
                   Form(
                     key: _formKey,
                     child: Column(
                       children: <Widget>[
                         TextFormField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Fecha',
                             labelStyle: TextStyle(
                               color: Colors.black45,
                               fontSize: 18.0,
                               fontWeight: FontWeight.w400,
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.calendar_today,
                               color: Colors.black45,
                             ),
                             contentPadding: const EdgeInsets.symmetric(vertical: 30.0),
                           ),
-                          style: TextStyle(
+                          style: const TextStyle(
                             //height: 0.0,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -108,12 +111,15 @@ class _HomeState extends State<Home> {
                           color: Color(0xff01A0C7),
                           child: MaterialButton(
                             minWidth: MediaQuery.of(context).size.width,
-                            padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            child: Text(
+                            padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                            child: const Text(
                               "Consultar",
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 16.0)
-                                  .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             onPressed: () async {
                               setState(() => _progressActive = true);
@@ -127,7 +133,7 @@ class _HomeState extends State<Home> {
                             },
                           ),
                         ),
-                        SizedBox(height: 20.0),
+                        const SizedBox(height: 20.0),
                         SizedBox(
                           height: 2.0,
                           child: _progressActive == true
@@ -155,13 +161,13 @@ class _HomeState extends State<Home> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Aviso'),
-          content: Text('En torno a las 20:15h de cada día, la REE publica los precios '
+          title: const Text('Aviso'),
+          content: const Text('En torno a las 20:15h de cada día, la REE publica los precios '
               'de la electricidad que se aplicarán al día siguiente, por lo que '
               'es posible que los datos todavía no estén publicados.'),
           actions: [
             TextButton(
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
               onPressed: () {
                 seguirConsulta = false;
                 _progressActive = false;
@@ -169,7 +175,7 @@ class _HomeState extends State<Home> {
               },
             ),
             TextButton(
-              child: Text('Consultar'),
+              child: const Text('Consultar'),
               onPressed: () {
                 seguirConsulta = true;
                 Navigator.of(context).pop();
@@ -179,6 +185,12 @@ class _HomeState extends State<Home> {
         );
       },
     );
+  }
+
+  Future<Map<String, double>> consultarGeneracion() async {
+    var fecha = _datos.fecha.toString();
+    Map<String, double> generacion = await _datosGeneracion.getDatosGeneracion(fecha);
+    return generacion;
   }
 
   consultar() async {
@@ -218,17 +230,22 @@ class _HomeState extends State<Home> {
     if (_datos.status == Status.ok && _datosHoy.status != Status.ok) {
       checkStatus(_datosHoy.status);
     } else if (_datos.status == Status.ok && _datosHoy.status == Status.ok) {
-      setState(() => _progressActive = false);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Resultado(
-            data: _datos,
-            fecha: _dataController.text,
-            dataHoy: _datosHoy,
+      _generacion = consultarGeneracion().then((value) {
+        setState(() => _progressActive = false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Resultado(
+              data: _datos,
+              fecha: _dataController.text,
+              dataHoy: _datosHoy,
+              datosGeneracion: _datosGeneracion,
+              generacion: _generacion,
+            ),
           ),
-        ),
-      );
+        );
+        return value;
+      });
     }
   }
 

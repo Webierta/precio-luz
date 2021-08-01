@@ -23,6 +23,18 @@ class Tarifa {
     }
   }
 
+  static Color getColorCara(List<double> preciosHoras, double valor) {
+    List<double> preciosAs = List.from(preciosHoras);
+    preciosAs.sort();
+    if (preciosAs.indexWhere((v) => v == valor) < 8) {
+      return Colors.green[700];
+    } else if (preciosAs.indexWhere((v) => v == valor) > 15) {
+      return Colors.deepOrange[700];
+    } else {
+      return Colors.amber[700];
+    }
+  }
+
   static Icon getIconCara(List<double> preciosHoras, double valor, {double size = 40.0}) {
     List<double> preciosAs = List.from(preciosHoras);
     preciosAs.sort();

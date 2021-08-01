@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/datos_generacion.dart';
 import '../widgets/tab_main.dart';
 import '../widgets/appbar.dart';
 import '../widgets/tab_page_range.dart';
@@ -10,7 +11,12 @@ class Resultado extends StatefulWidget {
   final Datos data;
   final String fecha;
   final Datos dataHoy;
-  const Resultado({Key key, this.data, this.fecha, this.dataHoy}) : super(key: key);
+  final DatosGeneracion datosGeneracion;
+  final Future<Map<String, double>> generacion;
+
+  const Resultado(
+      {Key key, this.data, this.fecha, this.dataHoy, this.datosGeneracion, this.generacion})
+      : super(key: key);
   @override
   _ResultadoState createState() => _ResultadoState();
 }
@@ -39,6 +45,8 @@ class _ResultadoState extends State<Resultado> {
         data: widget.data,
         dataHoy: widget.dataHoy,
         safePadding: MediaQuery.of(context).padding.top,
+        dataGeneracion: widget.datosGeneracion,
+        generacion: widget.generacion,
       ),
       TabPage(
           page: 2,

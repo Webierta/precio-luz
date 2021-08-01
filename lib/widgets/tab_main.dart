@@ -1,32 +1,55 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
+import '../services/datos_generacion.dart';
 import '../utils/estados.dart';
 import '../services/datos.dart';
 import '../utils/tarifa.dart';
+import 'balance_generacion.dart';
+import 'datos_hoy.dart';
+import 'generacion_error.dart';
+import 'hoja_calendario.dart';
+import 'list_tile_fecha.dart';
+
+const TextStyle textBlanco = TextStyle(color: Colors.white);
+const TextStyle textBlanco70 = TextStyle(color: Colors.white70);
+
+const BoxDecoration boxDeco = BoxDecoration(
+  color: Color.fromRGBO(255, 255, 255, 0.1),
+  border: Border(
+    bottom: BorderSide(color: Color(0xFF1565C0), width: 1.5),
+    left: BorderSide(color: Color(0xFF1565C0), width: 1.5),
+  ),
+);
 
 class TabMain extends StatelessWidget {
   final String fecha;
   final Datos data;
   final Datos dataHoy;
   final double safePadding;
+  final DatosGeneracion dataGeneracion;
+  final Future<Map<String, double>> generacion;
 
-  const TabMain({Key key, this.fecha, this.data, this.dataHoy, this.safePadding}) : super(key: key);
+  const TabMain(
+      {Key key,
+      this.fecha,
+      this.data,
+      this.dataHoy,
+      this.safePadding,
+      this.dataGeneracion,
+      this.generacion})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    DateTime hoy = DateTime.now().toLocal();
-    int hora = hoy.hour;
-    String horaMin = DateFormat('HH:mm').format(hoy);
-    double precioHoy = dataHoy.getPrecio(dataHoy.preciosHora, hora);
-    var periodoAhora = Tarifa.getPeriodo(DateTime.now().toLocal());
     var periodoMin = Tarifa.getPeriodo(data.getDataTime(
-        data.fecha, data.getHour(data.preciosHora, data.precioMin(data.preciosHora))));
+      data.fecha,
+      data.getHour(data.preciosHora, data.precioMin(data.preciosHora)),
+    ));
     var periodoMax = Tarifa.getPeriodo(data.getDataTime(
-        data.fecha, data.getHour(data.preciosHora, data.precioMax(data.preciosHora))));
-    var desviacionHoy =
-        dataHoy.preciosHora[hora] - dataHoy.calcularPrecioMedio(dataHoy.preciosHora);
+      data.fecha,
+      data.getHour(data.preciosHora, data.precioMax(data.preciosHora)),
+    ));
     var desviacionMin =
         data.precioMin(data.preciosHora) - data.calcularPrecioMedio(data.preciosHora);
     var desviacionMax =
@@ -35,13 +58,9 @@ class TabMain extends StatelessWidget {
     var horaPeriodoMax = data.getHora(data.preciosHora, data.precioMax(data.preciosHora));
     var precioPeriodoMin = data.precioMin(data.preciosHora).toStringAsFixed(5);
     var precioPeriodoMax = data.precioMax(data.preciosHora).toStringAsFixed(5);
-
-    Orientation orientation = MediaQuery.of(context).orientation;
     double altoScreen = MediaQuery.of(context).size.height;
-    double anchoScreen = MediaQuery.of(context).size.width;
 
     return Container(
-      height: orientation == Orientation.portrait ? altoScreen : altoScreen * 1.6,
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
         gradient: RadialGradient(
@@ -59,108 +78,24 @@ class TabMain extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
+          DatosHoy(dataHoy: dataHoy),
+          SizedBox(height: altoScreen / 20),
+          Column(
             children: [
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+              HojaCalendario(fecha: fecha), // data.fecha
+              SizedBox(height: altoScreen / 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: Row(
+                  children: const [
+                    Icon(Icons.access_time, color: Colors.white, size: 18),
+                    SizedBox(width: 4),
                     Text(
-                      'Hoy a las $horaMin',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            '${precioHoy.toStringAsFixed(5)}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 80,
-                              fontWeight: FontWeight.w100,
-                            ),
-                          ),
-                          const Text('€/kWh', style: TextStyle(color: Colors.white)),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Color(0xFF1565C0),
-                          radius: 15,
-                          child: Tarifa.getIconPeriodo(periodoAhora, size: 25),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          '${describeEnum(periodoAhora).toUpperCase()}',
-                          style: const TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Color(0xFF1565C0),
-                          radius: 15,
-                          child: Icon(
-                            desviacionHoy > 0 ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                            size: 30,
-                            color: desviacionHoy > 0 ? Colors.red : Colors.green,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          '${desviacionHoy.toStringAsFixed(4)} €',
-                          style: const TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                      ],
+                      'Precios mínimo y máximo',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ],
                 ),
-              ),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  RotatedBox(
-                    quarterTurns: 2,
-                    child: Icon(
-                      Icons.lightbulb,
-                      color: Tarifa.getColorFondo(precioHoy),
-                      size: anchoScreen / 3,
-                    ),
-                  ),
-                  Positioned(
-                    top: anchoScreen / 7.5,
-                    child: Tarifa.getIconCara(
-                      dataHoy.preciosHora,
-                      dataHoy.preciosHora[hora],
-                      size: anchoScreen / 6,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: altoScreen / 10),
-          Column(
-            children: [
-              Row(
-                children: [
-                  const SizedBox(width: 6),
-                  const Icon(
-                    Icons.calendar_today,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 8),
-                  Text('$fecha', style: TextStyle(color: Colors.white)),
-                ],
               ),
               const SizedBox(height: 4),
               ClipPath(
@@ -170,49 +105,35 @@ class TabMain extends StatelessWidget {
                   ),
                 ),
                 child: Container(
-                  padding: const EdgeInsets.all(8.0),
+                  //padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    //borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    color: Color.fromRGBO(255, 255, 255, 0.1),
-                    border: Border(
-                      bottom: BorderSide(color: Color(0xFF1565C0), width: 1.5),
-                      left: BorderSide(color: Color(0xFF1565C0), width: 1.5),
-                    ),
-                  ),
+                  decoration: boxDeco,
                   child: Column(
                     children: [
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          'Hora más barata del día:',
-                          style:
-                              Theme.of(context).textTheme.caption.copyWith(color: Colors.white70),
-                        ),
-                      ),
                       ListTileFecha(
                         periodo: periodoMin,
                         hora: horaPeriodoMin,
                         precio: precioPeriodoMin,
                         desviacion: desviacionMin,
                       ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          'Hora más cara del día:',
-                          style:
-                              Theme.of(context).textTheme.caption.copyWith(color: Colors.white70),
+                      Divider(color: Colors.white70, indent: 20, endIndent: 20),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: ListTileFecha(
+                          periodo: periodoMax,
+                          hora: horaPeriodoMax,
+                          precio: precioPeriodoMax,
+                          desviacion: desviacionMax,
                         ),
                       ),
-                      ListTileFecha(
-                        periodo: periodoMax,
-                        hora: horaPeriodoMax,
-                        precio: precioPeriodoMax,
-                        desviacion: desviacionMax,
-                      ),
-                      Text(
-                        'Precio Medio: ${(data.calcularPrecioMedio(data.preciosHora)).toStringAsFixed(5)} €/kWh',
-                        style: const TextStyle(color: Colors.white),
+                      Divider(color: Colors.white70, indent: 20, endIndent: 20),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Precio Medio: ${(data.calcularPrecioMedio(data.preciosHora)).toStringAsFixed(5)} €/kWh',
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
@@ -220,67 +141,125 @@ class TabMain extends StatelessWidget {
               ),
             ],
           ),
+          SizedBox(height: altoScreen / 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Row(
+              children: const [
+                Icon(Icons.bolt, color: Colors.white, size: 18),
+                SizedBox(width: 4),
+                Text(
+                  'Balance Generación',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          ClipPath(
+            clipper: ShapeBorderClipper(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 14),
+              width: double.infinity,
+              decoration: boxDeco,
+              child: dataGeneracion.status == StatusGeneracion.error
+                  ? Container(child: const GeneracionError())
+                  : FutureBuilder(
+                      future: generacion,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done ||
+                            snapshot.connectionState == ConnectionState.waiting ||
+                            snapshot.hasError ||
+                            !snapshot.hasData ||
+                            snapshot.data.isEmpty ||
+                            dataGeneracion.mapRenovables.isEmpty ||
+                            dataGeneracion.mapNoRenovables.isEmpty ||
+                            !snapshot.data.containsKey('Generación renovable') ||
+                            !snapshot.data.containsKey('Generación no renovable')) {
+                          return const GeneracionError();
+                        } else {
+                          var total = snapshot.data['Generación renovable'] +
+                              snapshot.data['Generación no renovable'];
+                          var mapRenovables = <String, double>{};
+                          var mapNoRenovables = <String, double>{};
+                          mapRenovables = Map.from(dataGeneracion.mapRenovables);
+                          mapNoRenovables = Map.from(dataGeneracion.mapNoRenovables);
+                          var sortedMapRenovables = Map.fromEntries(mapRenovables.entries.toList()
+                            ..sort((e1, e2) => (e2.value).compareTo((e1.value))));
+                          var sortedMapNoRenovables = Map.fromEntries(
+                              mapNoRenovables.entries.toList()
+                                ..sort((e1, e2) => (e2.value).compareTo((e1.value))));
+                          //double _renovableValue = snapshot.data['Generación renovable'];
+
+                          String calcularPorcentaje(double valor) {
+                            var total = snapshot.data['Generación renovable'] +
+                                snapshot.data['Generación no renovable'];
+                            return ((valor * 100) / total).toStringAsFixed(1);
+                          }
+
+                          double valueLinearProgress(String typo) {
+                            return (double.tryParse(calcularPorcentaje(snapshot.data[typo])) ??
+                                    100) /
+                                100;
+                          }
+
+                          return Column(
+                            children: [
+                              BalanceGeneracion(
+                                sortedMap: sortedMapRenovables,
+                                title: 'Generación renovable',
+                                total: total,
+                              ),
+                              LinearProgressIndicator(
+                                value: valueLinearProgress('Generación renovable'),
+                                backgroundColor: Colors.grey,
+                                color: Colors.green,
+                              ),
+                              SizedBox(height: 20),
+                              BalanceGeneracion(
+                                sortedMap: sortedMapNoRenovables,
+                                title: 'Generación no renovable',
+                                total: total,
+                              ),
+                              LinearProgressIndicator(
+                                value: valueLinearProgress('Generación no renovable'),
+                                backgroundColor: Colors.grey,
+                                color: Colors.red,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 18),
+                                child: Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(
+                                      DateTime.now()
+                                                  .difference(DateTime.parse(data.fecha))
+                                                  .inDays >=
+                                              1
+                                          ? 'Datos programados'
+                                          : 'Datos previstos',
+                                      style: textBlanco70),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      }),
+            ),
+          ),
+          SizedBox(height: altoScreen / 20),
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: Column(
               children: const [
                 Divider(color: Colors.blueGrey),
-                Text('Fuente: REE y elaboración propia', style: TextStyle(color: Colors.white70)),
+                Text('Fuente: REE (e·sios y REData)', style: TextStyle(color: Colors.white70)),
                 Divider(color: Colors.blueGrey),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ListTileFecha extends StatelessWidget {
-  final Periodo periodo;
-  final String hora;
-  final String precio;
-  final double desviacion;
-  const ListTileFecha({Key key, this.periodo, this.hora, this.precio, this.desviacion})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Column(
-        children: [
-          CircleAvatar(
-            backgroundColor: Color(0xFF1565C0),
-            radius: 15,
-            child: Tarifa.getIconPeriodo(periodo, size: 25),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${describeEnum(periodo).toUpperCase()}',
-            style: TextStyle(fontSize: 10, color: Colors.white),
-          ),
-        ],
-      ),
-      title: Text(
-        '$hora',
-        style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w200),
-      ),
-      subtitle: Text('$precio €/kWh', style: const TextStyle(color: Colors.white)),
-      trailing: Column(
-        children: [
-          CircleAvatar(
-            backgroundColor: Color(0xFF1565C0),
-            radius: 15,
-            child: Icon(
-              desviacion > 0 ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-              size: 30,
-              color: desviacion > 0 ? Colors.red : Colors.green,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '${desviacion.toStringAsFixed(4)} €',
-            style: const TextStyle(fontSize: 12, color: Colors.white),
           ),
         ],
       ),

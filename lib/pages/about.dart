@@ -6,9 +6,7 @@ class About extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Acerca de'),
-      ),
+      appBar: AppBar(title: const Text('Acerca de')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SafeArea(
@@ -16,13 +14,9 @@ class About extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const Head(),
-                Icon(
-                  Icons.code, //wb_incandescent,
-                  size: 60,
-                  color: Colors.cyan[700],
-                ),
+                const Icon(Icons.code, size: 60, color: Color(0xFF0097A7)),
                 Text(
-                  'Versión 2.2.2',
+                  'Versión 2.3.0', // VERSION
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(
@@ -30,11 +24,11 @@ class About extends StatelessWidget {
                   style: Theme.of(context).textTheme.subtitle1,
                   textAlign: TextAlign.center,
                 ),
-                FittedBox(
+                const FittedBox(
                   child: Text('All Wrongs Reserved. Licencia GPLv3'),
                 ),
-                Divider(),
-                SizedBox(height: 10.0),
+                const Divider(),
+                const SizedBox(height: 10.0),
                 const ReadFile(archivo: 'assets/files/about.txt'),
               ],
             ),

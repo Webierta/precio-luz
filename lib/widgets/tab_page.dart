@@ -42,16 +42,9 @@ class TabPage extends StatelessWidget {
                 } else {
                   //var listaPrecios = List.from(data.preciosHora);
                   List<double> listaPrecios = data.preciosHora;
-                  var mapPrecios = listaPrecios.asMap();
-                  var sortedKeys = mapPrecios.keys.toList(growable: false)
-                    ..sort((k1, k2) => mapPrecios[k1].compareTo(mapPrecios[k2]));
-                  Map<int, double> mapPreciosSorted = Map.fromIterable(
-                    sortedKeys,
-                    key: (k) => k,
-                    value: (k) => mapPrecios[k],
-                  );
-                  precios = mapPreciosSorted.values.toList();
-                  var listaKeys = mapPreciosSorted.keys.toList();
+                  Map<int, double> mapPreciosOrdenados = data.ordenarPrecios(listaPrecios);
+                  precios = mapPreciosOrdenados.values.toList();
+                  var listaKeys = mapPreciosOrdenados.keys.toList();
                   _index = listaKeys[index];
                 }
                 Color _color = Tarifa.getColorFondo(precios[index]);
