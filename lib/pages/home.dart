@@ -108,7 +108,7 @@ class _HomeState extends State<Home> {
                         Material(
                           elevation: 5.0,
                           borderRadius: BorderRadius.circular(30.0),
-                          color: Color(0xff01A0C7),
+                          color: const Color(0xFF1565C0),
                           child: MaterialButton(
                             minWidth: MediaQuery.of(context).size.width,
                             padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),

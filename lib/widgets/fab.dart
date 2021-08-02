@@ -19,12 +19,7 @@ class Fab extends StatelessWidget {
                     child: Column(
                       children: const <Widget>[
                         Head(),
-                        Icon(
-                          Icons.help_outline, //wb_incandescent,
-                          size: 60,
-                          //color: Colors.cyan[700],
-                          color: Color(0xFF0097A7),
-                        ),
+                        Icon(Icons.help_outline, size: 60, color: Color(0xFF1565C0)),
                         Divider(),
                         SizedBox(height: 10.0),
                         Text('La aplicación admite dos métodos para la obtención de los datos: '
@@ -52,9 +47,9 @@ class Fab extends StatelessWidget {
 
     return FloatingActionButton.extended(
       onPressed: () => openDialog(),
-      icon: Icon(Icons.help_outline),
-      label: Text('Ayuda'),
-      backgroundColor: Colors.pink,
+      icon: const Icon(Icons.help_outline),
+      label: const Text('Ayuda'),
+      backgroundColor: const Color(0xFFE91E63),
     );
   }
 }

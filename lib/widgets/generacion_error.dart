@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/estados.dart';
 
 const TextStyle textBlanco = TextStyle(color: Colors.white);
 const TextStyle textBlanco70 = TextStyle(color: Colors.white70);
@@ -9,13 +10,13 @@ class GeneracionError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: const [
+      children: [
         ListTile(
-          title: Text('Renovables', style: textBlanco),
+          title: Text(Generacion.renovable.tipo, style: textBlanco),
           trailing: Text('N/D', style: textBlanco),
         ),
         ListTile(
-          title: Text('No Renovables', style: textBlanco),
+          title: Text(Generacion.noRenovable.tipo, style: textBlanco),
           trailing: Text('N/D', style: textBlanco),
         ),
         Padding(

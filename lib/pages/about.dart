@@ -14,9 +14,9 @@ class About extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const Head(),
-                const Icon(Icons.code, size: 60, color: Color(0xFF0097A7)),
+                const Icon(Icons.code, size: 60, color: Color(0xFF1565C0)),
                 Text(
-                  'Versión 2.3.1', // VERSION
+                  'Versión 2.3.2', // VERSION
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(

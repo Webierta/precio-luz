@@ -32,27 +32,23 @@ class DonationPage extends StatelessWidget {
         child: Column(
           children: [
             const Head(),
-            Icon(
-              Icons.favorite_border, //wb_incandescent,
-              size: 60,
-              color: Colors.cyan[700],
-            ),
-            Divider(),
-            SizedBox(height: 10.0),
-            Align(
+            const Icon(Icons.favorite_border, size: 60, color: Color(0xFF1565C0)),
+            const Divider(),
+            const SizedBox(height: 10.0),
+            const Align(
               alignment: Alignment.topLeft,
               child: Text(
                   'Esta App es Software libre y de Código Abierto. Por favor considera colaborar '
                   'para mantener activo el desarrollo de esta App.'),
             ),
-            SizedBox(height: 10.0),
-            Align(
+            const SizedBox(height: 10.0),
+            const Align(
               alignment: Alignment.topLeft,
               child: Text(
                   '¿Crees que has encontrado un problema? Identificar y corregir errores hace que '
                   'esta App sea mejor para todos. Informa de un error aquí:'),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             FractionallySizedBox(
               widthFactor: 0.3,
               child: Container(
@@ -65,18 +61,14 @@ class DonationPage extends StatelessWidget {
                 child: Center(
                   child: IconButton(
                     onPressed: () => _launchURL(urlGitHub),
-                    icon: const Icon(
-                      Icons.bug_report,
-                      size: 40,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.bug_report, size: 40, color: Colors.white),
                     //padding: const EdgeInsets.all(10),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10.0),
-            Align(
+            const SizedBox(height: 10.0),
+            const Align(
               alignment: Alignment.topLeft,
               child: Text(
                   'Puedes colaborar con el desarrollo de ésta y otras aplicaciones con una pequeña '

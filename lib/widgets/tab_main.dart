@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/constantes.dart';
 import '../services/datos_generacion.dart';
 import '../utils/estados.dart';
 import '../services/datos.dart';
@@ -8,19 +9,9 @@ import '../utils/tarifa.dart';
 import 'balance_generacion.dart';
 import 'datos_hoy.dart';
 import 'generacion_error.dart';
+import 'grafico_main.dart';
 import 'hoja_calendario.dart';
 import 'list_tile_fecha.dart';
-
-const TextStyle textBlanco = TextStyle(color: Colors.white);
-const TextStyle textBlanco70 = TextStyle(color: Colors.white70);
-
-const BoxDecoration boxDeco = BoxDecoration(
-  color: Color.fromRGBO(255, 255, 255, 0.1),
-  border: Border(
-    bottom: BorderSide(color: Color(0xFF1565C0), width: 1.5),
-    left: BorderSide(color: Color(0xFF1565C0), width: 1.5),
-  ),
-);
 
 class TabMain extends StatelessWidget {
   final String fecha;
@@ -79,6 +70,8 @@ class TabMain extends StatelessWidget {
       child: Column(
         children: [
           DatosHoy(dataHoy: dataHoy),
+          const SizedBox(height: 10),
+          GraficoMain(dataHoy: dataHoy),
           SizedBox(height: altoScreen / 20),
           Column(
             children: [
@@ -99,16 +92,12 @@ class TabMain extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               ClipPath(
-                clipper: ShapeBorderClipper(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                ),
+                clipper: kBorderClipper,
                 child: Container(
                   //padding: const EdgeInsets.all(8.0),
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   width: double.infinity,
-                  decoration: boxDeco,
+                  decoration: kBoxDeco,
                   child: Column(
                     children: [
                       ListTileFecha(
@@ -157,15 +146,11 @@ class TabMain extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           ClipPath(
-            clipper: ShapeBorderClipper(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-            ),
+            clipper: kBorderClipper,
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 14),
               width: double.infinity,
-              decoration: boxDeco,
+              decoration: kBoxDeco,
               child: dataGeneracion.status == StatusGeneracion.error
                   ? Container(child: const GeneracionError())
                   : FutureBuilder(
@@ -178,12 +163,12 @@ class TabMain extends StatelessWidget {
                             snapshot.data.isEmpty ||
                             dataGeneracion.mapRenovables.isEmpty ||
                             dataGeneracion.mapNoRenovables.isEmpty ||
-                            !snapshot.data.containsKey('Generación renovable') ||
-                            !snapshot.data.containsKey('Generación no renovable')) {
+                            !snapshot.data.containsKey(Generacion.renovable.texto) ||
+                            !snapshot.data.containsKey(Generacion.noRenovable.texto)) {
                           return const GeneracionError();
                         } else {
-                          var total = snapshot.data['Generación renovable'] +
-                              snapshot.data['Generación no renovable'];
+                          var total = snapshot.data[Generacion.renovable.texto] +
+                              snapshot.data[Generacion.noRenovable.texto];
                           var mapRenovables = <String, double>{};
                           var mapNoRenovables = <String, double>{};
                           mapRenovables = Map.from(dataGeneracion.mapRenovables);
@@ -196,8 +181,8 @@ class TabMain extends StatelessWidget {
                           //double _renovableValue = snapshot.data['Generación renovable'];
 
                           String calcularPorcentaje(double valor) {
-                            var total = snapshot.data['Generación renovable'] +
-                                snapshot.data['Generación no renovable'];
+                            var total = snapshot.data[Generacion.renovable.texto] +
+                                snapshot.data[Generacion.noRenovable.texto];
                             return ((valor * 100) / total).toStringAsFixed(1);
                           }
 
@@ -211,22 +196,22 @@ class TabMain extends StatelessWidget {
                             children: [
                               BalanceGeneracion(
                                 sortedMap: sortedMapRenovables,
-                                title: 'Generación renovable',
+                                generacion: Generacion.renovable,
                                 total: total,
                               ),
                               LinearProgressIndicator(
-                                value: valueLinearProgress('Generación renovable'),
+                                value: valueLinearProgress(Generacion.renovable.texto),
                                 backgroundColor: Colors.grey,
                                 color: Colors.green,
                               ),
                               SizedBox(height: 20),
                               BalanceGeneracion(
                                 sortedMap: sortedMapNoRenovables,
-                                title: 'Generación no renovable',
+                                generacion: Generacion.noRenovable,
                                 total: total,
                               ),
                               LinearProgressIndicator(
-                                value: valueLinearProgress('Generación no renovable'),
+                                value: valueLinearProgress(Generacion.noRenovable.texto),
                                 backgroundColor: Colors.grey,
                                 color: Colors.red,
                               ),
@@ -235,13 +220,12 @@ class TabMain extends StatelessWidget {
                                 child: Align(
                                   alignment: Alignment.bottomRight,
                                   child: Text(
-                                      DateTime.now()
-                                                  .difference(DateTime.parse(data.fecha))
-                                                  .inDays >=
-                                              1
-                                          ? 'Datos programados'
-                                          : 'Datos previstos',
-                                      style: textBlanco70),
+                                    DateTime.now().difference(DateTime.parse(data.fecha)).inDays >=
+                                            1
+                                        ? 'Datos programados'
+                                        : 'Datos previstos',
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
                                 ),
                               ),
                             ],

@@ -41,7 +41,7 @@ class _InicioState extends State<Inicio> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        title: Text('Acceso PVPC'),
+        title: const Text('Acceso PVPC'),
         appBar: AppBar(),
       ),
       body: SafeArea(
@@ -127,9 +127,7 @@ class _InicioState extends State<Inicio> {
       _sharedPrefs.token = _token;
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => Home(source: Source.api),
-        ),
+        MaterialPageRoute(builder: (context) => Home(source: Source.api)),
       );
     } else {
       setState(() => _validate = true);
@@ -139,9 +137,7 @@ class _InicioState extends State<Inicio> {
   void actionFile() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => Home(source: Source.file),
-      ),
+      MaterialPageRoute(builder: (context) => Home(source: Source.file)),
     );
   }
 }
@@ -156,7 +152,7 @@ class BotonSource extends StatelessWidget {
     return Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: const Color(0xff01A0C7),
+      color: const Color(0xFF1565C0),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -164,8 +160,10 @@ class BotonSource extends StatelessWidget {
         child: Text(
           source == Source.api ? 'API' : 'Archivo',
           textAlign: TextAlign.center,
-          style:
-              TextStyle(fontSize: 16.0).copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16.0).copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

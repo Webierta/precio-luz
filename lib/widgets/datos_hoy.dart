@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../utils/estados.dart';
 import '../services/datos.dart';
 import '../utils/tarifa.dart';
 
@@ -15,7 +15,9 @@ class DatosHoy extends StatelessWidget {
     int hora = hoy.hour;
     String horaMin = DateFormat('HH:mm').format(hoy);
     double precioHoy = dataHoy.getPrecio(dataHoy.preciosHora, hora);
-    var periodoAhora = Tarifa.getPeriodo(DateTime.now().toLocal());
+    Periodo periodoAhora = Tarifa.getPeriodo(DateTime.now().toLocal());
+    //String periodoAhoraNombre = (Tarifa.getPeriodo(DateTime.now().toLocal())).nombre;
+    String periodoAhoraNombre = Tarifa.getPeriodoNombre(periodoAhora);
     var desviacionHoy =
         dataHoy.preciosHora[hora] - dataHoy.calcularPrecioMedio(dataHoy.preciosHora);
     double anchoScreen = MediaQuery.of(context).size.width;
@@ -38,12 +40,8 @@ class DatosHoy extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.calendar_today,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                  SizedBox(width: 4),
+                  const Icon(Icons.calendar_today, color: Colors.white, size: 16),
+                  const SizedBox(width: 4),
                   Text(
                     'Hoy a las $horaMin',
                     style: const TextStyle(color: Colors.white, fontSize: 16),
@@ -113,7 +111,8 @@ class DatosHoy extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    '${describeEnum(periodoAhora).toUpperCase()}',
+                    //'${describeEnum(periodoAhora).toUpperCase()}',
+                    periodoAhoraNombre,
                     style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ],

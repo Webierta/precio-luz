@@ -10,7 +10,7 @@ class Info extends StatelessWidget {
       showDialog(
           context: context,
           builder: (_) => AlertDialog(
-                backgroundColor: Colors.blue.shade800,
+                backgroundColor: Color(0xFF1565C0),
                 title: Row(
                   children: const [
                     Icon(Icons.info_outline, color: Colors.white),
@@ -37,7 +37,7 @@ class Info extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const Head(),
-                const Icon(Icons.info_outline, size: 60, color: Color(0xFF0097A7)),
+                const Icon(Icons.info_outline, size: 60, color: Color(0xFF1565C0)),
                 const Divider(),
                 const SizedBox(height: 10.0),
                 RichText(

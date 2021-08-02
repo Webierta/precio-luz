@@ -7,7 +7,7 @@ class Leyenda extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Iconografía'),
+        title: const Text('Iconografía'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -51,7 +51,7 @@ class Leyenda extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
                       'Diferencia respecto al precio medio del día:',
                       style: Theme.of(context).textTheme.subtitle2,
@@ -82,7 +82,7 @@ class Leyenda extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
                       'Rangos de horas:',
                       style: Theme.of(context).textTheme.subtitle2,
@@ -121,7 +121,7 @@ class Leyenda extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     Text(
                       'Rangos de precios (€/kWh):',
                       style: Theme.of(context).textTheme.subtitle2,
@@ -194,7 +194,7 @@ class ContainerPeriodo extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(texto),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Icon(icono, color: colorIcono, size: 40),
           ],
         ),

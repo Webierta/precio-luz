@@ -31,13 +31,10 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                 value: Info(), //Info.id,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Icon(
-                      Icons.info,
-                      color: const Color(0xff01A0C7),
-                    ),
+                  children: const <Widget>[
+                    Icon(Icons.info, color: Color(0xFF1565C0)),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
+                      padding: EdgeInsets.only(left: 8.0),
                       child: Text('Info'),
                     ),
                   ],
@@ -47,13 +44,10 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                 value: About(), //About.id,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Icon(
-                      Icons.code,
-                      color: const Color(0xff01A0C7),
-                    ),
+                  children: const <Widget>[
+                    Icon(Icons.code, color: Color(0xFF1565C0)),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
+                      padding: EdgeInsets.only(left: 8.0),
                       child: Text('About'),
                     ),
                   ],
@@ -63,13 +57,10 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
                 value: DonationPage(), //About.id,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Icon(
-                      Icons.local_cafe,
-                      color: const Color(0xff01A0C7),
-                    ),
+                  children: const <Widget>[
+                    Icon(Icons.local_cafe, color: Color(0xFF1565C0)),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
+                      padding: EdgeInsets.only(left: 8.0),
                       child: Text('Colaborar'),
                     ),
                   ],

@@ -12,7 +12,8 @@ class PrecioLuz extends StatelessWidget {
       title: 'PrecioLuz',
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: [const Locale('es', 'ES')],
-      theme: ThemeData(primaryColor: Color(0xff01A0C7)),
+      //theme: ThemeData(primaryColor: Color(0xff01A0C7)),
+      theme: ThemeData(primaryColor: Color(0xFF1565C0)),
       home: Inicio(),
     );
   }
