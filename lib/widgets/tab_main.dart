@@ -70,7 +70,7 @@ class TabMain extends StatelessWidget {
       child: Column(
         children: [
           DatosHoy(dataHoy: dataHoy),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           GraficoMain(dataHoy: dataHoy),
           SizedBox(height: altoScreen / 20),
           Column(

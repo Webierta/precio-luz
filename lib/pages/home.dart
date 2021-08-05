@@ -44,110 +44,110 @@ class _HomeState extends State<Home> {
         appBar: AppBar(),
       ),
       body: SafeArea(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: <Widget>[
-                  FittedBox(
+        child: Center(
+          child: Container(
+            //height: MediaQuery.of(context).size.height,
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: FittedBox(
                     child: Text(
                       'Selecciona el día que quieres consultar:',
                       style: Theme.of(context).textTheme.subtitle1,
-                      textAlign: TextAlign.center,
                     ),
                   ),
-                  const SizedBox(height: 20.0),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: <Widget>[
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Fecha',
-                            labelStyle: TextStyle(
-                              color: Colors.black45,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            prefixIcon: const Icon(
-                              Icons.calendar_today,
-                              color: Colors.black45,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 30.0),
+                ),
+                const SizedBox(height: 10.0),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Fecha',
+                          labelStyle: TextStyle(
+                            color: Colors.black45,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w400,
                           ),
-                          style: const TextStyle(
-                            //height: 0.0,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                          prefixIcon: const Icon(
+                            Icons.calendar_today,
+                            color: Colors.black45,
                           ),
-                          validator: (value) => value.trim().isEmpty ? 'Fecha requerida' : null,
-                          controller: _dataController,
-                          onTap: () async {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            DateTime picked = await showDatePicker(
-                              context: context,
-                              locale: const Locale('es', 'ES'),
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2021, 6),
-                              lastDate: manana,
-                            );
-                            if (picked != null) {
-                              //if (picked != _fechaIn) { RESET?? //}
-                              _dataController.text = DateFormat('dd/MM/yyyy').format(picked);
-                              setState(() {
-                                _fechaIn = DateFormat('yyyy-MM-dd').format(picked);
-                                _datos.fecha = _fechaIn;
-                              });
-                              noPublicado = picked == manana && hoy.hour < 20 ? true : false;
+                          contentPadding: const EdgeInsets.symmetric(vertical: 30.0),
+                        ),
+                        style: const TextStyle(
+                          //height: 0.0,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        validator: (value) => value.trim().isEmpty ? 'Fecha requerida' : null,
+                        controller: _dataController,
+                        onTap: () async {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          DateTime picked = await showDatePicker(
+                            context: context,
+                            locale: const Locale('es', 'ES'),
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2021, 6),
+                            lastDate: manana,
+                          );
+                          if (picked != null) {
+                            //if (picked != _fechaIn) { RESET?? //}
+                            _dataController.text = DateFormat('dd/MM/yyyy').format(picked);
+                            setState(() {
+                              _fechaIn = DateFormat('yyyy-MM-dd').format(picked);
+                              _datos.fecha = _fechaIn;
+                            });
+                            noPublicado = picked == manana && hoy.hour < 20 ? true : false;
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                      Material(
+                        elevation: 5.0,
+                        borderRadius: BorderRadius.circular(30.0),
+                        color: const Color(0xFF1565C0),
+                        child: MaterialButton(
+                          minWidth: MediaQuery.of(context).size.width,
+                          padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          child: const Text(
+                            "Consultar",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onPressed: () async {
+                            setState(() => _progressActive = true);
+                            seguirConsulta = true;
+                            if (noPublicado == true) {
+                              await dialogoNoPublicado();
+                            }
+                            if (_formKey.currentState.validate() && seguirConsulta == true) {
+                              await consultar();
                             }
                           },
                         ),
-                        const SizedBox(height: 30),
-                        Material(
-                          elevation: 5.0,
-                          borderRadius: BorderRadius.circular(30.0),
-                          color: const Color(0xFF1565C0),
-                          child: MaterialButton(
-                            minWidth: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            child: const Text(
-                              "Consultar",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            onPressed: () async {
-                              setState(() => _progressActive = true);
-                              seguirConsulta = true;
-                              if (noPublicado == true) {
-                                await dialogoNoPublicado();
-                              }
-                              if (_formKey.currentState.validate() && seguirConsulta == true) {
-                                await consultar();
-                              }
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 20.0),
-                        SizedBox(
-                          height: 2.0,
-                          child: _progressActive == true
-                              ? LinearProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(Colors.blue),
-                                  backgroundColor: Colors.yellow,
-                                )
-                              : null,
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      SizedBox(
+                        height: 2.0,
+                        child: _progressActive == true
+                            ? LinearProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(Colors.blue),
+                                backgroundColor: Colors.yellow,
+                              )
+                            : null,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

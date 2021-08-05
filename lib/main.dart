@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'pages/inicio.dart';
 
-void main() => runApp(PrecioLuz());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.white));
+  runApp(PrecioLuz());
+}
 
 class PrecioLuz extends StatelessWidget {
   @override

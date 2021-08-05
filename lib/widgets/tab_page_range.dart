@@ -127,66 +127,97 @@ class _TabPageRangeState extends State<TabPageRange> {
             ),
           ),
           const Divider(),
-          _duration.inMinutes < 61
-              ? const Text(
-                  'La duración no supera una hora: puedes comprobar la hora más barata en la pestaña Horas.')
-              : _calculando == true
-                  ? Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        width: MediaQuery.of(context).size.width / 2,
-                        height: MediaQuery.of(context).size.width / 2,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 20,
-                          backgroundColor: Colors.grey,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      //height: 73.0 * franjas,
-                      constraints: BoxConstraints(
-                        maxHeight: 100.0 * franjas,
-                      ),
-                      child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          //cacheExtent: 10000.0 * franjas.value,
-                          shrinkWrap: true,
-                          itemCount: franjas,
-                          itemBuilder: (context, index) {
-                            List<double> preciosOrdenados = mapPreciosSorted.values.toList();
-                            final precioOrdenado = preciosOrdenados[index];
-                            List<Duration> listaKeys = mapPreciosSorted.keys.toList();
-                            // TITULO CON HORAS Y MINUTOS DE CADA FRANJA
-                            final timeFranja = listaKeys[index];
-                            final horaInicioFranja = timeFranja.inHours;
-                            final minInicioFranja =
-                                int.tryParse(timeFranja.toString().split(':')[1]) ?? 0;
-                            final Duration hora2 = timeFranja + _duration;
-                            final horaLapso = hora2.inHours;
-                            final minLapso = int.tryParse(hora2.toString().split(':')[1]) ?? 0;
-                            final _color = Tarifa.getColorFondo(precioOrdenado);
-                            return Container(
-                              decoration: BoxDecoration(
-                                border: const Border(
-                                  bottom: BorderSide(width: 0.8, color: Colors.grey),
-                                  left: BorderSide(width: 10.0, color: Colors.grey),
-                                ),
-                                color: _color,
-                              ),
-                              child: ListTile(
-                                leading: Text('${index + 1}'),
-                                title: Text(
-                                  '$horaInicioFranja:${minInicioFranja.toString().padLeft(2, '0')} - '
-                                  '$horaLapso:${minLapso.toString().padLeft(2, '0')}',
-                                  style: Theme.of(context).textTheme.headline6,
-                                ),
-                                subtitle: Text('${(precioOrdenado.toStringAsFixed(5))} €/kWh'),
-                              ),
-                            );
-                          }),
-                    ),
+          if (_duration.inMinutes <= 60)
+            const Text(
+                'La duración no supera una hora: puedes comprobar la hora más barata en la pestaña Horas.'),
+          if (_duration.inMinutes > 60 && _calculando == true) const Loading(),
+          if (_duration.inMinutes > 60 &&
+              _calculando == false &&
+              franjas != 0 &&
+              mapPreciosSorted.isNotEmpty)
+            ContainerListView(
+              duration: _duration,
+              franjas: franjas,
+              mapPreciosSorted: mapPreciosSorted,
+            ),
         ],
       ),
+    );
+  }
+}
+
+class Loading extends StatelessWidget {
+  const Loading({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: const [
+            Text('Calculando...'),
+            LinearProgressIndicator(
+              minHeight: 2.0,
+              valueColor: AlwaysStoppedAnimation(Colors.blue),
+              backgroundColor: Colors.yellow,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ContainerListView extends StatelessWidget {
+  final Duration duration;
+  final int franjas;
+  final Map<Duration, double> mapPreciosSorted;
+  const ContainerListView({Key key, this.duration, this.franjas, this.mapPreciosSorted})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<double> preciosOrdenados = mapPreciosSorted?.values?.toList();
+    List<Duration> listaKeys = mapPreciosSorted?.keys?.toList();
+    return Container(
+      constraints: BoxConstraints(maxHeight: 100.0 * franjas),
+      child: ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          //cacheExtent: 10000.0 * franjas.value,
+          shrinkWrap: true,
+          itemCount: franjas,
+          itemBuilder: (context, index) {
+            //List<double> preciosOrdenados = mapPreciosSorted?.values?.toList();
+            var precioOrdenado = preciosOrdenados[index];
+            //List<Duration> listaKeys = mapPreciosSorted?.keys?.toList();
+            // TITULO CON HORAS Y MINUTOS DE CADA FRANJA
+            var timeFranja = listaKeys[index];
+            var horaInicioFranja = timeFranja.inHours;
+            var minInicioFranja = int.tryParse(timeFranja.toString().split(':')[1]) ?? 0;
+            var hora2 = timeFranja + duration;
+            var horaLapso = hora2.inHours;
+            var minLapso = int.tryParse(hora2.toString().split(':')[1]) ?? 0;
+            var _color = Tarifa.getColorFondo(precioOrdenado);
+            return Container(
+              decoration: BoxDecoration(
+                border: const Border(
+                  bottom: BorderSide(width: 0.8, color: Colors.grey),
+                  left: BorderSide(width: 10.0, color: Colors.grey),
+                ),
+                color: _color,
+              ),
+              child: ListTile(
+                leading: Text('${index + 1}'),
+                title: Text(
+                  '$horaInicioFranja:${minInicioFranja.toString().padLeft(2, '0')} - '
+                  '$horaLapso:${minLapso.toString().padLeft(2, '0')}',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                subtitle: Text('${(precioOrdenado.toStringAsFixed(5))} €/kWh'),
+              ),
+            );
+          }),
     );
   }
 }

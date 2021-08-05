@@ -49,11 +49,13 @@ class _InicioState extends State<Inicio> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              FittedBox(
-                child: Text(
-                  'Selecciona el método de descarga de datos:',
-                  style: Theme.of(context).textTheme.subtitle1,
-                  textAlign: TextAlign.center,
+              Align(
+                alignment: Alignment.topLeft,
+                child: FittedBox(
+                  child: Text(
+                    'Selecciona el método de descarga de datos:',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
                 ),
               ),
               Stack(

@@ -87,9 +87,17 @@ class Formula extends StatefulWidget {
 class _FormulaState extends State<Formula> {
   bool visiblePoliticos = false;
 
+  ScrollController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+      controller: _controller,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -98,26 +106,41 @@ class _FormulaState extends State<Formula> {
           const Text('Distribución (REE)  +', style: TextStyle(color: Colors.white)),
           const Text('Impuestos (IVA)  +', style: TextStyle(color: Colors.white)),
           const FittedBox(
-              child: Text(
-            'Otros costes regulados  +',
-            style: TextStyle(color: Colors.white),
-          )),
+            child: Text('Otros costes regulados  +', style: TextStyle(color: Colors.white)),
+          ),
           InkWell(
-            onTap: () => setState(() => visiblePoliticos = !visiblePoliticos),
+            onTap: () => setState(() {
+              visiblePoliticos = !visiblePoliticos;
+              if (visiblePoliticos) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _controller.animateTo(
+                    _controller.position.maxScrollExtent,
+                    duration: Duration(seconds: 1),
+                    curve: Curves.ease,
+                  );
+                });
+              } else {
+                _controller.animateTo(_controller.position.minScrollExtent,
+                    duration: Duration(seconds: 1), curve: Curves.ease);
+              }
+            }),
             child: const FittedBox(
               child: Text('Otros costes no regulados*  +', style: TextStyle(color: Colors.white)),
             ),
           ),
-          visiblePoliticos
-              ? const FittedBox(
-                  child: Text(
-                    '(políticos y puertas giratorias)    ',
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                )
-              : const SizedBox(height: 0),
           const Divider(color: Colors.white70),
           const Text('= PVPC', style: TextStyle(color: Colors.white)),
+          const SizedBox(height: 10),
+          Opacity(
+            opacity: visiblePoliticos ? 1.0 : 0.0,
+            child: const Text(
+              '* Prácticas comerciales oligopolistas en un sistema opaco y sin libre competencia '
+              'permitido por la Comisión Nacional de la Competencia y los políticos, '
+              'habituales de las puertas giratorias.',
+              textScaleFactor: 1,
+              style: TextStyle(color: Colors.white70),
+            ),
+          )
         ],
       ),
     );
