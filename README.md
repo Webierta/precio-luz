@@ -12,7 +12,7 @@
 
 ![Screenshot](https://raw.githubusercontent.com/Webierta/precio-luz/master/Screenshot_2.png) ![Screenshot](https://raw.githubusercontent.com/Webierta/precio-luz/master/Screenshot_3.png)
 
-![Screenshot](https://raw.githubusercontent.com/Webierta/precio-luz/master/Screenshot_4.png) ![Screenshot](https://raw.githubusercontent.com/Webierta/precio-luz/master/Screenshot_6.png)
+![Screenshot](https://raw.githubusercontent.com/Webierta/precio-luz/master/Screenshot_4.png) ![Screenshot](https://raw.githubusercontent.com/Webierta/precio-luz/master/Screenshot_5.png)
 
 ![Screenshot](https://raw.githubusercontent.com/Webierta/precio-luz/master/Screenshot_6.png)
 
