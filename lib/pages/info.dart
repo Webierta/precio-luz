@@ -86,12 +86,18 @@ class Formula extends StatefulWidget {
 
 class _FormulaState extends State<Formula> {
   bool visiblePoliticos = false;
-
   ScrollController _controller;
+
   @override
   void initState() {
     super.initState();
     _controller = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
