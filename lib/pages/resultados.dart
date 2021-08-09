@@ -65,7 +65,7 @@ class _ResultadoState extends State<Resultado> {
       appBar: BaseAppBar(title: const Text('Datos PVPC'), appBar: AppBar()),
       body: SafeArea(
         child: SingleChildScrollView(
-          scrollDirection: Axis.vertical, //TODO: REVISAR
+          scrollDirection: Axis.vertical,
           physics: ClampingScrollPhysics(),
           //padding: const EdgeInsets.all(10.0),
           controller: _scrollController,
@@ -76,6 +76,7 @@ class _ResultadoState extends State<Resultado> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.lightbulb_outline),
+            activeIcon: Icon(Icons.upgrade),
             label: 'PVPC',
             backgroundColor: Color(0xFF0D47A1),
           ),

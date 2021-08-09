@@ -16,7 +16,7 @@ class About extends StatelessWidget {
                 const Head(),
                 const Icon(Icons.code, size: 60, color: Color(0xFF1565C0)),
                 Text(
-                  'Versión 2.3.5', // VERSION
+                  'Versión 2.3.6', // VERSION
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(

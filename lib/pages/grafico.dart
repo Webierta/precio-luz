@@ -18,10 +18,12 @@ class Grafico extends StatefulWidget {
 class _GraficoState extends State<Grafico> {
   List<double> precios;
   int _selectedItem;
+  int horaValor;
 
   @override
   void initState() {
     precios = List.from(widget.data.preciosHora);
+    horaValor = -1;
     DateTime hoy = DateTime.now().toLocal();
     int hora = hoy.hour;
     _selectedItem = hora;
@@ -58,9 +60,13 @@ class _GraficoState extends State<Grafico> {
                         //padding: const EdgeInsets.symmetric(horizontal: 1.0),
                         colorForValue: (_, value, [min]) {
                           if (value != null) {
-                            var indice = precios.indexOf(value) ?? 0;
+                            horaValor++;
+                            if (horaValor > 23) {
+                              horaValor = 0;
+                            }
+                            //var indice = precios.indexOf(value) ?? 0;
                             Periodo periodo = Tarifa.getPeriodo(
-                                widget.data.getDataTime(widget.data.fecha, indice));
+                                widget.data.getDataTime(widget.data.fecha, horaValor));
                             return Tarifa.getColorPeriodo(periodo);
                           }
                           return Colors.grey;

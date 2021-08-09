@@ -15,6 +15,7 @@ class GraficoMain extends StatelessWidget {
     double altoScreen = MediaQuery.of(context).size.height;
     DateTime hoy = DateTime.now().toLocal();
     int hora = hoy.hour;
+    int horaValor = -1;
 
     return ClipPath(
       clipper: kBorderClipper,
@@ -31,9 +32,16 @@ class GraficoMain extends StatelessWidget {
             ),
             itemOptions: BubbleItemOptions(
               colorForValue: (_, value, [min]) {
+                horaValor++;
+                if (horaValor > 23) {
+                  horaValor = 0;
+                }
                 if (value != null) {
-                  var indice = precios.indexOf(value);
+                  /* var indice = precios.indexOf(value);                  
                   if (indice == hora) {
+                    return Colors.white;
+                  } */
+                  if (hora == horaValor) {
                     return Colors.white;
                   }
                 }
