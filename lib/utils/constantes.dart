@@ -13,3 +13,5 @@ const ShapeBorderClipper kBorderClipper = ShapeBorderClipper(
     borderRadius: BorderRadius.all(Radius.circular(10)),
   ),
 );
+
+const TextStyle sizeText20 = TextStyle(fontSize: 20.0);

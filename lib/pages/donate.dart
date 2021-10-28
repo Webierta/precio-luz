@@ -1,9 +1,8 @@
-import 'dart:ui';
-
+//import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:url_launcher/url_launcher.dart';
-
+import '../utils/constantes.dart';
 import '../widgets/head.dart';
 
 class DonationPage extends StatelessWidget {
@@ -12,7 +11,8 @@ class DonationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const String btcAddress = '15ZpNzqbYFx9P7wg4U438JMwZr2q3W6fkS';
-    const String urlPayPal = 'https://www.paypal.com/donate?hosted_button_id=986PSAHLH6N4L';
+    const String urlPayPal =
+        'https://www.paypal.com/donate?hosted_button_id=986PSAHLH6N4L';
     const String urlGitHub = 'https://github.com/Webierta/precio-luz/issues';
 
     void _launchURL(String url) async {
@@ -28,25 +28,29 @@ class DonationPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Buy Me a Coffee')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 40),
+        padding:
+            const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 40),
         child: Column(
           children: [
             const Head(),
-            const Icon(Icons.favorite_border, size: 60, color: Color(0xFF1565C0)),
+            const Icon(Icons.favorite_border,
+                size: 60, color: Color(0xFF1565C0)),
             const Divider(),
             const SizedBox(height: 10.0),
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
                   'Esta App es Software libre y de Código Abierto. Por favor considera colaborar '
-                  'para mantener activo el desarrollo de esta App.'),
+                  'para mantener activo el desarrollo de esta App.',
+                  style: sizeText20),
             ),
             const SizedBox(height: 10.0),
             const Align(
               alignment: Alignment.topLeft,
               child: Text(
                   '¿Crees que has encontrado un problema? Identificar y corregir errores hace que '
-                  'esta App sea mejor para todos. Informa de un error aquí:'),
+                  'esta App sea mejor para todos. Informa de un error aquí:',
+                  style: sizeText20),
             ),
             const SizedBox(height: 5),
             FractionallySizedBox(
@@ -61,7 +65,8 @@ class DonationPage extends StatelessWidget {
                 child: Center(
                   child: IconButton(
                     onPressed: () => _launchURL(urlGitHub),
-                    icon: const Icon(Icons.bug_report, size: 40, color: Colors.white),
+                    icon: const Icon(Icons.bug_report,
+                        size: 40, color: Colors.white),
                     //padding: const EdgeInsets.all(10),
                   ),
                 ),
@@ -72,13 +77,15 @@ class DonationPage extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: Text(
                   'Puedes colaborar con el desarrollo de ésta y otras aplicaciones con una pequeña '
-                  'aportación a mi monedero de Bitcoins o vía PayPal.'),
+                  'aportación a mi monedero de Bitcoins o vía PayPal.',
+                  style: sizeText20),
             ),
             const Align(
               alignment: Alignment.topLeft,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.0),
-                child: Text('Scan this QR code with your wallet application:'),
+                child: Text('Scan this QR code with your wallet application:',
+                    style: sizeText20),
               ),
             ),
             FractionallySizedBox(
@@ -89,7 +96,8 @@ class DonationPage extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.0),
-                child: Text('Or copy the BTC Wallet Address:'),
+                child:
+                    Text('Or copy the BTC Wallet Address:', style: sizeText20),
               ),
             ),
             FittedBox(
@@ -126,12 +134,15 @@ class DonationPage extends StatelessWidget {
                       height: 50,
                       decoration: BoxDecoration(
                         border: Border(
-                            left: BorderSide(color: Colors.black12, style: BorderStyle.solid)),
+                            left: BorderSide(
+                                color: Colors.black12,
+                                style: BorderStyle.solid)),
                       ),
                       child: IconButton(
                         icon: const Icon(Icons.copy),
                         onPressed: () async {
-                          await Clipboard.setData(ClipboardData(text: btcAddress));
+                          await Clipboard.setData(
+                              ClipboardData(text: btcAddress));
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text('BTC Address copied to Clipboard.'),
                           ));
@@ -146,7 +157,9 @@ class DonationPage extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: const Padding(
                 padding: EdgeInsets.only(top: 20.0, bottom: 10.0),
-                child: Text('Donate vía Paypal (open the PayPal payment website):'),
+                child: Text(
+                    'Donate via Paypal (open the PayPal payment website):',
+                    style: sizeText20),
               ),
             ),
             FractionallySizedBox(

@@ -14,6 +14,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: FittedBox(child: title),
+      //backgroundColor: Color(0xFF1565C0),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.help, color: Colors.white),
