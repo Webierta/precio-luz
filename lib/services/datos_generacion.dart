@@ -1,16 +1,15 @@
-//import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../utils/estados.dart';
 
 class DatosGeneracion {
-  //String fecha = '';
   StatusGeneracion status;
-  Map<String, double> mapRenovables;
-  Map<String, double> mapNoRenovables;
+  Map<String, double> mapRenovables = <String, double>{};
+  Map<String, double> mapNoRenovables = <String, double>{};
+  Map<String, double> generacion = <String, double>{};
 
-  Future<Map<String, double>> getDatosGeneracion(String fecha) async {
+  getDatosGeneracion(String fecha) async {
     var url =
         'https://apidatos.ree.es/es/datos/balance/balance-electrico?start_date=${fecha}T00:00&end_date=${fecha}T23:59&time_trunc=day';
     //https://apidatos.ree.es/es/datos/balance/balance-electrico?start_date=2021-07-28T00:00&end_date=2021-07-28T23:59&time_trunc=day
@@ -19,7 +18,7 @@ class DatosGeneracion {
       'Content-Type': 'application/json',
       'Host': 'apidatos.ree.es',
     };
-    var generacion = <String, double>{};
+    //var generacion = <String, double>{};
     try {
       var response =
           await http.get(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 10));
@@ -45,8 +44,10 @@ class DatosGeneracion {
           }
           mapRenovables = Map.from(renovablesValor);
           mapNoRenovables = Map.from(noRenovablesValor);
+          generacion
+            ..addAll(renovablesValor)
+            ..addAll(noRenovablesValor);
           status = StatusGeneracion.ok;
-          generacion..addAll(renovablesValor)..addAll(noRenovablesValor);
         }
       } else {
         //print(response.statusCode);
@@ -56,6 +57,5 @@ class DatosGeneracion {
       //print(e);
       status = StatusGeneracion.error;
     }
-    return generacion;
   }
 }

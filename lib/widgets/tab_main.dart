@@ -1,4 +1,3 @@
-//import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/constantes.dart';
@@ -10,45 +9,82 @@ import 'balance_generacion.dart';
 import 'datos_hoy.dart';
 import 'generacion_error.dart';
 import 'grafico_main.dart';
-import 'hoja_calendario.dart';
 import 'list_tile_fecha.dart';
 
-class TabMain extends StatelessWidget {
+class TabMain extends StatefulWidget {
   final String fecha;
   final Datos data;
-  final Datos dataHoy;
-  final double safePadding;
   final DatosGeneracion dataGeneracion;
-  final Future<Map<String, double>> generacion;
 
-  const TabMain(
-      {Key key,
-      this.fecha,
-      this.data,
-      this.dataHoy,
-      this.safePadding,
-      this.dataGeneracion,
-      this.generacion})
-      : super(key: key);
+  const TabMain({Key key, this.fecha, this.data, this.dataGeneracion}) : super(key: key);
+
+  @override
+  State<TabMain> createState() => _TabMainState();
+}
+
+class _TabMainState extends State<TabMain> {
+  Periodo periodoMin;
+  Periodo periodoMax;
+  double desviacionMin;
+  double desviacionMax;
+  String horaPeriodoMin;
+  String horaPeriodoMax;
+  String precioPeriodoMin;
+  String precioPeriodoMax;
+
+  @override
+  void initState() {
+    periodoMin = Tarifa.getPeriodo(widget.data.getDataTime(
+      widget.data.fecha,
+      widget.data.getHour(widget.data.preciosHora, widget.data.precioMin(widget.data.preciosHora)),
+    ));
+    periodoMax = Tarifa.getPeriodo(widget.data.getDataTime(
+      widget.data.fecha,
+      widget.data.getHour(widget.data.preciosHora, widget.data.precioMax(widget.data.preciosHora)),
+    ));
+    desviacionMin = widget.data.precioMin(widget.data.preciosHora) -
+        widget.data.calcularPrecioMedio(widget.data.preciosHora);
+    desviacionMax = widget.data.precioMax(widget.data.preciosHora) -
+        widget.data.calcularPrecioMedio(widget.data.preciosHora);
+    horaPeriodoMin = widget.data
+        .getHora(widget.data.preciosHora, widget.data.precioMin(widget.data.preciosHora));
+    horaPeriodoMax = widget.data
+        .getHora(widget.data.preciosHora, widget.data.precioMax(widget.data.preciosHora));
+    precioPeriodoMin = widget.data.precioMin(widget.data.preciosHora).toStringAsFixed(5);
+    precioPeriodoMax = widget.data.precioMax(widget.data.preciosHora).toStringAsFixed(5);
+    super.initState();
+  }
+
+  double total() {
+    return widget.dataGeneracion.generacion[Generacion.renovable.texto] +
+        widget.dataGeneracion.generacion[Generacion.noRenovable.texto];
+  }
+
+  Map<String, double> sortedMapRenovables() {
+    var mapRenovables = <String, double>{};
+    mapRenovables = Map.from(widget.dataGeneracion.mapRenovables);
+    return Map.fromEntries(
+        mapRenovables.entries.toList()..sort((e1, e2) => (e2.value).compareTo((e1.value))));
+  }
+
+  Map<String, double> sortedMapNoRenovables() {
+    var mapNoRenovables = <String, double>{};
+    mapNoRenovables = Map.from(widget.dataGeneracion.mapNoRenovables);
+    return Map.fromEntries(
+        mapNoRenovables.entries.toList()..sort((e1, e2) => (e2.value).compareTo((e1.value))));
+  }
+
+  String calcularPorcentaje(double valor) {
+    return ((valor * 100) / total()).toStringAsFixed(1);
+  }
+
+  double valueLinearProgress(String typo) {
+    return (double.tryParse(calcularPorcentaje(widget.dataGeneracion.generacion[typo])) ?? 100) /
+        100;
+  }
 
   @override
   Widget build(BuildContext context) {
-    var periodoMin = Tarifa.getPeriodo(data.getDataTime(
-      data.fecha,
-      data.getHour(data.preciosHora, data.precioMin(data.preciosHora)),
-    ));
-    var periodoMax = Tarifa.getPeriodo(data.getDataTime(
-      data.fecha,
-      data.getHour(data.preciosHora, data.precioMax(data.preciosHora)),
-    ));
-    var desviacionMin =
-        data.precioMin(data.preciosHora) - data.calcularPrecioMedio(data.preciosHora);
-    var desviacionMax =
-        data.precioMax(data.preciosHora) - data.calcularPrecioMedio(data.preciosHora);
-    var horaPeriodoMin = data.getHora(data.preciosHora, data.precioMin(data.preciosHora));
-    var horaPeriodoMax = data.getHora(data.preciosHora, data.precioMax(data.preciosHora));
-    var precioPeriodoMin = data.precioMin(data.preciosHora).toStringAsFixed(5);
-    var precioPeriodoMax = data.precioMax(data.preciosHora).toStringAsFixed(5);
     double altoScreen = MediaQuery.of(context).size.height;
 
     return Container(
@@ -69,14 +105,12 @@ class TabMain extends StatelessWidget {
       ),
       child: Column(
         children: [
-          DatosHoy(dataHoy: dataHoy),
+          DatosHoy(dataHoy: widget.data, fecha: widget.fecha),
           const SizedBox(height: 20),
-          GraficoMain(dataHoy: dataHoy),
+          GraficoMain(dataHoy: widget.data, fecha: widget.fecha),
           SizedBox(height: altoScreen / 20),
           Column(
             children: [
-              HojaCalendario(fecha: fecha), // data.fecha
-              SizedBox(height: altoScreen / 30),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Row(
@@ -120,7 +154,7 @@ class TabMain extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
-                          'Precio Medio: ${(data.calcularPrecioMedio(data.preciosHora)).toStringAsFixed(5)} €/kWh',
+                          'Precio Medio: ${(widget.data.calcularPrecioMedio(widget.data.preciosHora)).toStringAsFixed(5)} €/kWh',
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
@@ -151,87 +185,51 @@ class TabMain extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 14),
               width: double.infinity,
               decoration: kBoxDeco,
-              child: dataGeneracion.status == StatusGeneracion.error
+              child: (widget.dataGeneracion.status == StatusGeneracion.error) ||
+                      (widget.dataGeneracion.generacion?.isEmpty ?? true) ||
+                      (widget.dataGeneracion.mapRenovables?.isEmpty ?? true) ||
+                      (widget.dataGeneracion.mapNoRenovables?.isEmpty ?? true) ||
+                      (!widget.dataGeneracion.generacion.containsKey(Generacion.renovable.texto)) ||
+                      !widget.dataGeneracion.generacion.containsKey(Generacion.noRenovable.texto)
                   ? Container(child: const GeneracionError())
-                  : FutureBuilder(
-                      future: generacion,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState != ConnectionState.done ||
-                            snapshot.connectionState == ConnectionState.waiting ||
-                            snapshot.hasError ||
-                            !snapshot.hasData ||
-                            snapshot.data.isEmpty ||
-                            dataGeneracion.mapRenovables.isEmpty ||
-                            dataGeneracion.mapNoRenovables.isEmpty ||
-                            !snapshot.data.containsKey(Generacion.renovable.texto) ||
-                            !snapshot.data.containsKey(Generacion.noRenovable.texto)) {
-                          return const GeneracionError();
-                        } else {
-                          var total = snapshot.data[Generacion.renovable.texto] +
-                              snapshot.data[Generacion.noRenovable.texto];
-                          var mapRenovables = <String, double>{};
-                          var mapNoRenovables = <String, double>{};
-                          mapRenovables = Map.from(dataGeneracion.mapRenovables);
-                          mapNoRenovables = Map.from(dataGeneracion.mapNoRenovables);
-                          var sortedMapRenovables = Map.fromEntries(mapRenovables.entries.toList()
-                            ..sort((e1, e2) => (e2.value).compareTo((e1.value))));
-                          var sortedMapNoRenovables = Map.fromEntries(
-                              mapNoRenovables.entries.toList()
-                                ..sort((e1, e2) => (e2.value).compareTo((e1.value))));
-                          //double _renovableValue = snapshot.data['Generación renovable'];
-
-                          String calcularPorcentaje(double valor) {
-                            var total = snapshot.data[Generacion.renovable.texto] +
-                                snapshot.data[Generacion.noRenovable.texto];
-                            return ((valor * 100) / total).toStringAsFixed(1);
-                          }
-
-                          double valueLinearProgress(String typo) {
-                            return (double.tryParse(calcularPorcentaje(snapshot.data[typo])) ??
-                                    100) /
-                                100;
-                          }
-
-                          return Column(
-                            children: [
-                              BalanceGeneracion(
-                                sortedMap: sortedMapRenovables,
-                                generacion: Generacion.renovable,
-                                total: total,
-                              ),
-                              LinearProgressIndicator(
-                                value: valueLinearProgress(Generacion.renovable.texto),
-                                backgroundColor: Colors.grey,
-                                color: Colors.green,
-                              ),
-                              SizedBox(height: 20),
-                              BalanceGeneracion(
-                                sortedMap: sortedMapNoRenovables,
-                                generacion: Generacion.noRenovable,
-                                total: total,
-                              ),
-                              LinearProgressIndicator(
-                                value: valueLinearProgress(Generacion.noRenovable.texto),
-                                backgroundColor: Colors.grey,
-                                color: Colors.red,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 18),
-                                child: Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Text(
-                                    DateTime.now().difference(DateTime.parse(data.fecha)).inDays >=
-                                            1
-                                        ? 'Datos programados'
-                                        : 'Datos previstos',
-                                    style: TextStyle(color: Colors.white70),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }
-                      }),
+                  : Column(
+                      children: [
+                        BalanceGeneracion(
+                          sortedMap: sortedMapRenovables(),
+                          generacion: Generacion.renovable,
+                          total: total(),
+                        ),
+                        LinearProgressIndicator(
+                          value: valueLinearProgress(Generacion.renovable.texto),
+                          backgroundColor: Colors.grey,
+                          color: Colors.green,
+                        ),
+                        SizedBox(height: 20),
+                        BalanceGeneracion(
+                          sortedMap: sortedMapNoRenovables(),
+                          generacion: Generacion.noRenovable,
+                          total: total(),
+                        ),
+                        LinearProgressIndicator(
+                          value: valueLinearProgress(Generacion.noRenovable.texto),
+                          backgroundColor: Colors.grey,
+                          color: Colors.red,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 18),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Text(
+                              DateTime.now().difference(DateTime.parse(widget.data.fecha)).inDays >=
+                                      1
+                                  ? 'Datos programados'
+                                  : 'Datos previstos',
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ),
           SizedBox(height: altoScreen / 20),

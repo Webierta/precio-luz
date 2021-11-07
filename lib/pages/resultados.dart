@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../services/datos_generacion.dart';
 import '../widgets/tab_main.dart';
 import '../widgets/appbar.dart';
@@ -10,13 +11,9 @@ import 'grafico.dart';
 class Resultado extends StatefulWidget {
   final Datos data;
   final String fecha;
-  final Datos dataHoy;
   final DatosGeneracion datosGeneracion;
-  final Future<Map<String, double>> generacion;
 
-  const Resultado(
-      {Key key, this.data, this.fecha, this.dataHoy, this.datosGeneracion, this.generacion})
-      : super(key: key);
+  const Resultado({Key key, this.data, this.fecha, this.datosGeneracion}) : super(key: key);
   @override
   _ResultadoState createState() => _ResultadoState();
 }
@@ -43,10 +40,7 @@ class _ResultadoState extends State<Resultado> {
       TabMain(
         fecha: widget.fecha,
         data: widget.data,
-        dataHoy: widget.dataHoy,
-        safePadding: MediaQuery.of(context).padding.top,
         dataGeneracion: widget.datosGeneracion,
-        generacion: widget.generacion,
       ),
       TabPage(
           page: 2,
@@ -61,6 +55,7 @@ class _ResultadoState extends State<Resultado> {
       ),
       TabPageRange(fecha: widget.fecha, data: widget.data),
     ];
+
     return Scaffold(
       appBar: BaseAppBar(title: const Text('Datos PVPC'), appBar: AppBar()),
       body: SafeArea(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../widgets/appbar.dart';
 import 'home.dart';
 import '../services/shared_prefs.dart';
 import '../widgets/fab.dart';
-import '../utils/estados.dart';
 
 class Inicio extends StatefulWidget {
   @override
@@ -12,7 +12,6 @@ class Inicio extends StatefulWidget {
 
 class _InicioState extends State<Inicio> {
   final _controller = TextEditingController();
-  bool _validate = false;
   final SharedPrefs _sharedPrefs = SharedPrefs();
   String _token;
   bool tokenVisible;
@@ -49,15 +48,6 @@ class _InicioState extends State<Inicio> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: <Widget>[
-              Align(
-                alignment: Alignment.topLeft,
-                child: FittedBox(
-                  child: Text(
-                    'Selecciona el método de descarga de datos:',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ),
-              ),
               Stack(
                 children: const <Widget>[
                   Icon(
@@ -86,18 +76,14 @@ class _InicioState extends State<Inicio> {
               TextField(
                 controller: _controller,
                 obscureText: !tokenVisible,
-                onChanged: (_) {
-                  setState(() {
-                    _controller.text.trim().isEmpty ? _validate = true : _validate = false;
-                  });
-                },
                 autofocus: false,
-                style: TextStyle(fontSize: 16.0),
+                style: const TextStyle(fontSize: 16.0),
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                   labelText: 'Token',
-                  errorText: _validate ? 'Introduce tu token personal' : null,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4.0)),
                   suffixIcon: IconButton(
                     icon: Icon(
                       tokenVisible ? Icons.visibility_off : Icons.visibility,
@@ -112,10 +98,25 @@ class _InicioState extends State<Inicio> {
                   ),
                 ),
               ),
-              BotonSource(source: Source.api, action: actionApi),
-              //SizedBox(height: 20.0),
-              Divider(color: Colors.blueGrey, indent: 20, endIndent: 20, height: 40.0),
-              BotonSource(source: Source.file, action: actionFile),
+              //BotonSource(action: actionApi),
+              Material(
+                elevation: 5.0,
+                borderRadius: BorderRadius.circular(4.0),
+                color: const Color(0xFF1565C0),
+                child: MaterialButton(
+                  minWidth: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  onPressed: actionApi,
+                  child: Text(
+                    'INICIO',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16.0).copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -125,50 +126,15 @@ class _InicioState extends State<Inicio> {
   }
 
   void actionApi() {
-    if (_controller.text.trim().isNotEmpty) {
-      _token = _controller.text;
-      _sharedPrefs.token = _token;
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => Home(source: Source.api)),
-      );
+    if (_controller.text.trim().isEmpty) {
+      _token = '';
     } else {
-      setState(() => _validate = true);
+      _token = _controller.text;
     }
-  }
-
-  void actionFile() {
+    _sharedPrefs.token = _token;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Home(source: Source.file)),
-    );
-  }
-}
-
-class BotonSource extends StatelessWidget {
-  final Source source;
-  final Function action;
-  const BotonSource({Key key, this.source, this.action}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: const Color(0xFF1565C0),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: action,
-        child: Text(
-          source == Source.api ? 'API' : 'Archivo',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16.0).copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => Home()),
     );
   }
 }

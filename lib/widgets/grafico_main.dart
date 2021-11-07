@@ -1,19 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:charts_painter/chart.dart';
+import 'package:intl/intl.dart';
 
 import '../utils/constantes.dart';
 import '../services/datos.dart';
 
 class GraficoMain extends StatelessWidget {
   final Datos dataHoy;
-  const GraficoMain({Key key, this.dataHoy}) : super(key: key);
+  final String fecha;
+  const GraficoMain({Key key, this.dataHoy, this.fecha}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<double> precios = List.from(dataHoy.preciosHora);
     var axisMin = (dataHoy.precioMin(precios)) - 0.01;
     double altoScreen = MediaQuery.of(context).size.height;
-    DateTime hoy = DateTime.now().toLocal();
+
+    final now = DateTime.now().toLocal();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime fechaData = DateFormat('dd/MM/yyyy').parse(fecha);
+    fechaData = DateTime(
+        fechaData.year, fechaData.month, fechaData.day, now.hour, now.minute);
+
+    //DateTime hoy = today == fechaData ? now : fechaData;
+    /*DateTime hoy = DateTime(today.year, today.month, today.day)
+                .difference(
+                    DateTime(fechaData.year, fechaData.month, fechaData.day))
+                .inDays ==
+            0
+        ? now
+        : fechaData;*/
+    DateTime hoy = fechaData;
+    //DateTime hoy = DateTime.now().toLocal();
     int hora = hoy.hour;
     int horaValor = -1;
 

@@ -6,12 +6,12 @@ import 'package:xml/xml.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+
 import '../utils/estados.dart';
 import 'datos_json.dart';
 
 class Datos {
   String fecha = '';
-  //List<String> horas = <String>[];
   List<double> preciosHora = <double>[];
   Status status;
 
@@ -20,10 +20,18 @@ class Datos {
     return ((value * mod).round().toDouble() / mod);
   }
 
-  Future getPreciosHoras(String fecha, Source source) async {
+  Future getPreciosHoras(String fecha) async {
     var url = 'https://api.esios.ree.es/archives/70/download_json?date=$fecha';
     var prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
+    if (token == 'token' || token == '' || token == null) {
+      const char = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      Random rnd = Random();
+      String randomString() => String.fromCharCodes(
+          Iterable.generate(64, (_) => char.codeUnitAt(rnd.nextInt(char.length))));
+      token = randomString();
+    }
+
     Map<String, String> headers = {
       'Accept': 'application/json; application/vnd.esios-api-v1+json',
       'Host': 'api.esios.ree.es',
@@ -34,39 +42,31 @@ class Datos {
       var response =
           await http.get(Uri.parse(url), headers: headers).timeout(const Duration(seconds: 10));
       if (response.body.contains('Access denied')) {
-        if (source == Source.api) {
+        /*if (source == Source.api) {
           status = Status.errorToken;
         } else {
           status = Status.accessDenied;
-        }
+        }*/
+        status = Status.accessDenied;
       } else if (response.statusCode == 200) {
         Map<String, dynamic> objJson = jsonDecode(response.body);
         var datosJson = DatosJson.fromJson(objJson);
-        //List<String> listaDias = <String>[];
-        //List<String> listaHoras = <String>[];
         List<String> listaPrecios = <String>[];
         for (var obj in datosJson.datosPVPC) {
-          //listaDias.add(obj.dia);
-          //listaHoras.add(obj.hora);
           listaPrecios.add(obj.precio);
         }
-        //fecha = listaDias.first;
-        //horas = List.from(listaHoras);
         for (var precio in listaPrecios) {
           var precioDouble = roundDouble((double.tryParse(precio.replaceAll(',', '.')) / 1000), 5);
           preciosHora.add(precioDouble);
         }
-        /*if (preciosHora.length == 24) {
-          status = Status.ok;
-        } else {
-          status = Status.error;
-        }*/
         status = preciosHora.length == 24 ? Status.ok : Status.error;
       } else {
         status = Status.noAcceso;
       }
     } on TimeoutException {
       status = Status.tiempoExcedido;
+    } on SocketException {
+      status = Status.noInternet;
     } on Error {
       status = Status.error;
     }
@@ -81,8 +81,8 @@ class Datos {
     String strXml;
     try {
       HttpClient http = HttpClient();
-      request = await http.getUrl(Uri.parse(url));
-      response = await request.close();
+      request = await http.getUrl(Uri.tryParse(url));
+      response = await request.close().timeout(const Duration(seconds: 10));
       responseBody = await response.transform(utf8.decoder).join();
       //objetoXml = parse(responseBody);
       objetoXml = XmlDocument.parse(responseBody);
@@ -100,13 +100,17 @@ class Datos {
         const termino = '"/></Intervalo>';
         final indice1 = subXml.indexOf(inicio);
         final indice2 = subXml.indexOf(termino, indice1);
-        var subPrecio = double.parse(subXml.substring(indice1 + inicio.length, indice2));
+        var subPrecio = double.tryParse(subXml.substring(indice1 + inicio.length, indice2));
         //preciosHoras.clear();
         listaPrecios.add(subPrecio);
       }
       preciosHora = List.from(listaPrecios);
       status = Status.ok;
-    } on Error {
+    } on TimeoutException {
+      status = Status.tiempoExcedido;
+    } on SocketException {
+      status = Status.noInternet;
+    } catch (e) {
       status = Status.error;
     } finally {
       request = null;

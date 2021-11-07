@@ -7,15 +7,35 @@ import '../utils/tarifa.dart';
 
 class DatosHoy extends StatelessWidget {
   final Datos dataHoy;
-  const DatosHoy({Key key, this.dataHoy}) : super(key: key);
+  final String fecha;
+  const DatosHoy({Key key, this.dataHoy, this.fecha}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    DateTime hoy = DateTime.now().toLocal();
+    final now = DateTime.now().toLocal();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime fechaData = DateFormat('dd/MM/yyyy').parse(fecha);
+    fechaData = DateTime(fechaData.year, fechaData.month, fechaData.day, now.hour, now.minute);
+
+    //DateTime hoy = today == fechaData ? now : fechaData;
+    /*DateTime hoy = DateTime(today.year, today.month, today.day)
+                .difference(
+                    DateTime(fechaData.year, fechaData.month, fechaData.day))
+                .inDays ==
+            0
+        ? now
+        : fechaData;*/
+    DateTime hoy = fechaData;
+    //print(DateTime.now().toLocal());
+    //print(fechaData);
+    //print(hoy);
+
+    //DateTime hoy = DateTime.now().toLocal();
     int hora = hoy.hour;
     String horaMin = DateFormat('HH:mm').format(hoy);
     double precioHoy = dataHoy.getPrecio(dataHoy.preciosHora, hora);
-    Periodo periodoAhora = Tarifa.getPeriodo(DateTime.now().toLocal());
+    //Periodo periodoAhora = Tarifa.getPeriodo(DateTime.now().toLocal());
+    Periodo periodoAhora = Tarifa.getPeriodo(hoy);
     //String periodoAhoraNombre = (Tarifa.getPeriodo(DateTime.now().toLocal())).nombre;
     String periodoAhoraNombre = Tarifa.getPeriodoNombre(periodoAhora);
     var desviacionHoy =
@@ -31,6 +51,27 @@ class DatosHoy extends StatelessWidget {
     List<double> preciosOrdenados = mapPreciosOrdenados.values.toList();
     var indexPrecio = preciosOrdenados.indexOf(precioHoy) + 1;
 
+    //final now = DateTime.now();
+    //final today = DateTime(now.year, now.month, now.day);
+    //DateTime fechaData = DateFormat('dd/MM/yyyy').parse(fecha);
+
+    /*String hoyString = DateTime(today.year, today.month, today.day)
+                .difference(
+                    DateTime(fechaData.year, fechaData.month, fechaData.day))
+                .inDays ==
+            0
+        ? 'Hoy'
+        : fecha;*/
+    //DateTime fechaData = DateFormat('dd/MM/yyyy').parse(dataHoy.fecha);
+    //final aDate = DateTime(fechaData.year, fechaData.month, fechaData.day);
+    //String hoyString = today == fechaData ? 'Hoy' : fecha;
+    /*String hoyString = DateTime(today.year, today.month, today.day)
+                .difference(
+                    DateTime(fechaData.year, fechaData.month, fechaData.day))
+                .inDays ==
+            0
+        ? 'Hoy'
+        : fecha;*/
     return Column(
       children: [
         Row(
@@ -45,7 +86,8 @@ class DatosHoy extends StatelessWidget {
                       const Icon(Icons.calendar_today, color: Colors.white, size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        'Hoy a las $horaMin',
+                        //'Hoy a las $horaMin',
+                        '$fecha a las $horaMin',
                         style: const TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ],

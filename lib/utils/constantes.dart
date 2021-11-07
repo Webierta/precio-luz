@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const String boxPVPC = 'pvpc';
+
 const BoxDecoration kBoxDeco = BoxDecoration(
   color: Color.fromRGBO(255, 255, 255, 0.1),
   border: Border(
@@ -15,3 +17,5 @@ const ShapeBorderClipper kBorderClipper = ShapeBorderClipper(
 );
 
 const TextStyle sizeText20 = TextStyle(fontSize: 20.0);
+
+const TextStyle size22Black = TextStyle(fontSize: 22.0, color: Colors.black);

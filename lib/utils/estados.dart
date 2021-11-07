@@ -1,6 +1,16 @@
 enum Source { api, file }
 
-enum Status { none, ok, error, noPublicado, noAcceso, tiempoExcedido, errorToken, accessDenied }
+enum Status {
+  none,
+  ok,
+  error,
+  noPublicado,
+  noAcceso,
+  tiempoExcedido,
+  errorToken,
+  accessDenied,
+  noInternet
+}
 
 enum StatusGeneracion { ok, error }
 
