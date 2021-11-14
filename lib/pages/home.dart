@@ -106,76 +106,86 @@ class _HomeState extends State<Home> {
     //DateTime manana = DateTime(hoy.year, hoy.month, hoy.day + 1);
     return (boxData == null || !(boxData.isOpen))
         ? CircularProgressIndicator()
-        : Scaffold(
-            appBar: BaseAppBar(
-              title: const Text('Consulta PVPC'),
-              appBar: AppBar(),
+        : Container(
+            decoration: const BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.topRight,
+                colors: [Colors.white, Colors.blue],
+                tileMode: TileMode.mirror,
+              ),
             ),
-            body: SafeArea(
-              child: _progressActive == true
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation(Colors.blue),
-                              backgroundColor: Colors.yellow,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: BaseAppBar(
+                title: const Text('Consulta PVPC'),
+                appBar: AppBar(),
+              ),
+              body: SafeArea(
+                child: _progressActive == true
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(Colors.blue),
+                                backgroundColor: Colors.yellow,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(txtProgress),
-                        ],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      //physics: const NeverScrollableScrollPhysics(),
-                      child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            children: <Widget>[
-                              buildForm(context),
-                              const SizedBox(height: 20),
-                              const Divider(),
-                              ListTile(
-                                title: const Text('Recupera datos archivados'),
-                                subtitle: const Text('No requiere conexión a internet'),
-                                trailing: IconButton(
-                                  icon: const Icon(
-                                    Icons.delete_forever,
-                                    size: 32,
-                                    color: Colors.black45,
-                                  ),
-                                  onPressed: () async {
-                                    if (boxData?.isEmpty ?? true) {
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                          content: Text('Archivo sin datos. Nada que hacer')));
-                                    } else {
-                                      bool eliminar = await confirmDelete(context);
-                                      if (eliminar == true) {
-                                        clearBox();
+                            const SizedBox(height: 20),
+                            Text(txtProgress),
+                          ],
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        //physics: const NeverScrollableScrollPhysics(),
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              children: <Widget>[
+                                buildForm(context),
+                                const SizedBox(height: 20),
+                                const Divider(),
+                                ListTile(
+                                  title: const Text('Recupera datos archivados'),
+                                  subtitle: const Text('No requiere conexión a internet'),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_forever,
+                                      size: 32,
+                                      color: Colors.black45,
+                                    ),
+                                    onPressed: () async {
+                                      if (boxData?.isEmpty ?? true) {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                            content: Text('Archivo sin datos. Nada que hacer')));
+                                      } else {
+                                        bool eliminar = await confirmDelete(context);
+                                        if (eliminar == true) {
+                                          clearBox();
+                                        }
                                       }
-                                    }
-                                  },
+                                    },
+                                  ),
                                 ),
-                              ),
-                              Almacen(
-                                datos: _datos,
-                                datosGeneracion: _datosGeneracion,
-                                boxData: boxData,
-                                fechaForm: _dataController.text,
-                                onDismissed: checkDateDataBase,
-                                load: loadDataBase,
-                              ),
-                            ],
+                                Almacen(
+                                  datos: _datos,
+                                  datosGeneracion: _datosGeneracion,
+                                  boxData: boxData,
+                                  fechaForm: _dataController.text,
+                                  onDismissed: checkDateDataBase,
+                                  load: loadDataBase,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
+              ),
             ),
           );
   }
@@ -251,29 +261,29 @@ class _HomeState extends State<Home> {
               }
             },
           ),
-          Material(
+          MaterialButton(
             elevation: 5.0,
-            borderRadius: BorderRadius.circular(4.0),
-            color: const Color(0xFF1565C0),
-            child: MaterialButton(
-              minWidth: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-              child: const Text(
-                'CONSULTAR',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-              onPressed: () async {
-                setState(() => _progressActive = true);
-                seguirConsulta = true;
-                if (noPublicado == true) {
-                  await dialogoNoPublicado();
-                }
-                if (_formKey.currentState.validate() && seguirConsulta == true) {
-                  await consultar();
-                }
-              },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
             ),
+            color: const Color(0xFF1565C0),
+            minWidth: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            child: const Text(
+              'CONSULTAR',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            onPressed: () async {
+              setState(() => _progressActive = true);
+              seguirConsulta = true;
+              if (noPublicado == true) {
+                await dialogoNoPublicado();
+              }
+              if (_formKey.currentState.validate() && seguirConsulta == true) {
+                await consultar();
+              }
+            },
           ),
         ],
       ),

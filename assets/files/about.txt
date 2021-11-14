@@ -19,3 +19,8 @@ Copyleft 2020-2021 - Jesús Cuerda (Webierta) - All Wrongs Reserved. Licencia GP
 Esta app se comparte libremente bajo las condiciones de la GNU General Public License v.3 con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA. Este programa es software libre: usted puede redistribuirlo y / o modificarlo bajo los términos de la Licencia Pública General GNU publicada por la Fundación para el Software Libre, versión 3 (GPLv3). La Licencia Pública General de GNU no permite incorporar este programa en programas propietarios.
 
 Si te gusta esta aplicación, por favor considera hacer una donación. Gracias.
+
+Créditos Iconos
+
+Colourful Education icon set (Free for commercial use) de Zeeshan Ahmed (https://www.iconfinder.com/zeeicons).
+New Year Resolutions! icon set (Creative Commons Attribution 3.0 Unported) de Laura Reen (http://laurareen.com/).

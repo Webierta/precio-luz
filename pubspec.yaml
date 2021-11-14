@@ -1,7 +1,7 @@
 name: precio_luz
 description: Detailed information by hours on the price of electricity in Spain (PVPC) for efficient management of electricity consumption.
 
-version: 2.4.0+23
+version: 2.4.1+24
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
@@ -27,12 +27,21 @@ dev_dependencies:
   intl: ^0.17.0
   hive_generator: ^1.1.1
   build_runner: ^2.1.4
-
+  flutter_launcher_icons: ^0.9.2
 
 flutter_icons:
-  image_path: "assets/images/icon.png"
   android: true
   ios: true
+  image_path_android: assets/icon/pvpc_icon.png
+  image_path_ios: assets/icon/pvpc_ios.png
+  adaptive_icon_background: assets/icon/ic_background.png
+  adaptive_icon_foreground: assets/icon/ic_foreground.png
+#  adaptive_icon_background: "#1565C0"
+
+#flutter_icons:
+#  image_path: "assets/images/icon.png"
+#  android: true
+#  ios: true
 
 flutter:
   uses-material-design: true

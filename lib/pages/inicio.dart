@@ -36,92 +36,92 @@ class _InicioState extends State<Inicio> {
 
   @override
   Widget build(BuildContext context) {
-    final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom == 0.0;
+    final bool keyboardClose = MediaQuery.of(context).viewInsets.bottom == 0.0;
 
-    return Scaffold(
-      appBar: BaseAppBar(
-        title: const Text('Acceso PVPC'),
-        appBar: AppBar(),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: RadialGradient(
+          center: Alignment.topRight,
+          colors: [Colors.white, Colors.blue],
+          tileMode: TileMode.mirror,
+        ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[
-              Stack(
-                children: const <Widget>[
-                  Icon(
-                    Icons.power, //wb_incandescent,
-                    size: 150,
-                    color: Color(0xFFFFB300), // amber[600],
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: BaseAppBar(
+          title: const Text('Acceso PVPC'),
+          appBar: AppBar(),
+        ),
+        body: SafeArea(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/images/ic_launcher.png',
+                    scale: keyboardClose ? 1 : 2,
                   ),
-                  Positioned(
-                    right: 4.0,
-                    child: Icon(
-                      Icons.power, //wb_incandescent,
-                      size: 150,
-                      color: Color(0xFFFFC107), // amber,
-                    ),
-                  ),
-                  Positioned.fill(
-                    right: 4.0,
-                    child: Icon(
-                      Icons.schedule,
-                      size: 50,
-                      color: Colors.white,
+                  SizedBox(height: 10),
+                  FractionallySizedBox(
+                    widthFactor: 0.7,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: _controller,
+                          obscureText: !tokenVisible,
+                          autofocus: false,
+                          style: const TextStyle(fontSize: 16.0),
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                            labelText: 'Token',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                tokenVisible ? Icons.visibility_off : Icons.visibility,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                              onPressed: () {
+                                if (tokenVisible) {
+                                  FocusScope.of(context).unfocus();
+                                }
+                                setState(() => tokenVisible = !tokenVisible);
+                              },
+                            ),
+                          ),
+                        ),
+                        MaterialButton(
+                          minWidth: double.infinity,
+                          elevation: 5.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          color: const Color(0xFF1565C0),
+                          padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                          onPressed: actionApi,
+                          child: Text(
+                            'INICIO',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 16.0).copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-              TextField(
-                controller: _controller,
-                obscureText: !tokenVisible,
-                autofocus: false,
-                style: const TextStyle(fontSize: 16.0),
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  labelText: 'Token',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4.0)),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      tokenVisible ? Icons.visibility_off : Icons.visibility,
-                      color: Theme.of(context).primaryColorLight,
-                    ),
-                    onPressed: () {
-                      if (tokenVisible) {
-                        FocusScope.of(context).unfocus();
-                      }
-                      setState(() => tokenVisible = !tokenVisible);
-                    },
-                  ),
-                ),
-              ),
-              //BotonSource(action: actionApi),
-              Material(
-                elevation: 5.0,
-                borderRadius: BorderRadius.circular(4.0),
-                color: const Color(0xFF1565C0),
-                child: MaterialButton(
-                  minWidth: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  onPressed: actionApi,
-                  child: Text(
-                    'INICIO',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16.0).copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
+        floatingActionButton: keyboardClose ? const Fab() : null,
       ),
-      floatingActionButton: keyboardOpen ? const Fab() : null,
     );
   }
 
