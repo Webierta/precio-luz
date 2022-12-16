@@ -36,6 +36,7 @@ class Datos {
       'Accept': 'application/json; application/vnd.esios-api-v1+json',
       'Host': 'api.esios.ree.es',
       'Authorization': 'Token token="$token"',
+      'x-api-key': $token,
       'Cookie': '',
     };
     try {
