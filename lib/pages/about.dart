@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/read_file.dart';
+
 import '../widgets/head.dart';
+import '../widgets/read_file.dart';
 
 class About extends StatelessWidget {
   @override
@@ -16,7 +17,7 @@ class About extends StatelessWidget {
                 const Head(),
                 const Icon(Icons.code, size: 60, color: Color(0xFF1565C0)),
                 Text(
-                  'Versión 2.4.1', // VERSION
+                  'Versión 2.4.2', // VERSION
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 Text(

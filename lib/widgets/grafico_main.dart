@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:charts_painter/chart.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../utils/constantes.dart';
 import '../services/datos.dart';
+import '../utils/constantes.dart';
 
 class GraficoMain extends StatelessWidget {
   final Datos dataHoy;
@@ -17,10 +17,9 @@ class GraficoMain extends StatelessWidget {
     double altoScreen = MediaQuery.of(context).size.height;
 
     final now = DateTime.now().toLocal();
-    final today = DateTime(now.year, now.month, now.day);
+    //final today = DateTime(now.year, now.month, now.day);
     DateTime fechaData = DateFormat('dd/MM/yyyy').parse(fecha);
-    fechaData = DateTime(
-        fechaData.year, fechaData.month, fechaData.day, now.hour, now.minute);
+    fechaData = DateTime(fechaData.year, fechaData.month, fechaData.day, now.hour, now.minute);
 
     //DateTime hoy = today == fechaData ? now : fechaData;
     /*DateTime hoy = DateTime(today.year, today.month, today.day)

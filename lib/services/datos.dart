@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'package:xml/xml.dart';
+
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xml/xml.dart';
 
 import '../utils/estados.dart';
 import 'datos_json.dart';
@@ -35,7 +36,7 @@ class Datos {
     Map<String, String> headers = {
       'Accept': 'application/json; application/vnd.esios-api-v1+json',
       'Host': 'api.esios.ree.es',
-      'Authorization': 'Token token="$token"',
+      'x-api-key': token,
       'Cookie': '',
     };
     try {

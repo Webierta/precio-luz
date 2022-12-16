@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 import 'package:url_launcher/url_launcher.dart';
+
 import '../utils/constantes.dart';
 import '../widgets/head.dart';
 
@@ -14,12 +15,20 @@ class DonationPage extends StatelessWidget {
     const String urlPayPal = 'https://www.paypal.com/donate?hosted_button_id=986PSAHLH6N4L';
     const String urlGitHub = 'https://github.com/Webierta/precio-luz/issues';
 
-    void _launchURL(String url) async {
+    /* void _launchURL(String url) async {
       if (await canLaunch(url)) {
         await launch(url);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Could not launch PayPal payment website.'),
+        ));
+      }
+    } */
+
+    Future<void> _launchURL(String url) async {
+      if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Could not launch $url'),
         ));
       }
     }

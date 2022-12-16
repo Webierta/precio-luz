@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../utils/constantes.dart';
 import 'head.dart';
 
@@ -9,12 +10,19 @@ class Fab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void _launchURL(String url) async {
+    /* void _launchURL(String url) async {
       if (await canLaunch(url)) {
         await launch(url);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Could not launch PayPal payment website.'),
+        ));
+      }
+    } */
+    Future<void> _launchURL(String url) async {
+      if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Could not launch $url'),
         ));
       }
     }

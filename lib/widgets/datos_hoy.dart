@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../utils/estados.dart';
 import '../services/datos.dart';
+import '../utils/estados.dart';
 import '../utils/tarifa.dart';
 
 class DatosHoy extends StatelessWidget {
@@ -13,7 +13,7 @@ class DatosHoy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now().toLocal();
-    final today = DateTime(now.year, now.month, now.day);
+    //final today = DateTime(now.year, now.month, now.day);
     DateTime fechaData = DateFormat('dd/MM/yyyy').parse(fecha);
     fechaData = DateTime(fechaData.year, fechaData.month, fechaData.day, now.hour, now.minute);
 
