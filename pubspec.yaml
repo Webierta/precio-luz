@@ -1,7 +1,7 @@
 name: precio_luz
 description: Detailed information by hours on the price of electricity in Spain (PVPC) for efficient management of electricity consumption.
 
-version: 2.4.2+25
+version: 2.4.3+26
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
