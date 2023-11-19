@@ -1,3 +1,5 @@
+> ## El Proyecto ha sido completamente renovado y movido a este repositorio: [Tarifa Luz](https://github.com/Webierta/tarifa_luz/releases) pendiente de su publicación
+
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
      alt="Get it on F-Droid"
      height="80">](https://f-droid.org/packages/com.pvpc.precio_luz/)
